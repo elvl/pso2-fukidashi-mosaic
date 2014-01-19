@@ -338,7 +338,7 @@ detect_wave_result ? Eval("""
    
     source_wh_info = "(movie width: " + String(source.width) + " height: " +  String(source.height) + ")"
     crop_height_limit = yv24r.height - letter_height * 2
-    Assert(wave_reward_info_pos < crop_height_limit, "wave_reward_is too large " + source_wh_info)
+    Assert(wave_reward_info_pos < crop_height_limit, "wave_reward_info_pos is too large " + source_wh_info)
     Assert(wave_title_pos < crop_height_limit, "wave_title_pos is too large " + source_wh_info)
     Assert(wave_countdown_info_pos_y < crop_height_limit, "wave_countdown_info_pos_y is too large " + source_wh_info)
     Assert(wave_result_h + wave_result_pos < crop_height_limit, "wave_result_h or wave_result_pos is too large " + source_wh_info)
