@@ -332,23 +332,35 @@ frame = nameFrameMaskYV(yv24r, y8ri, luma_threshold, tolerance, line_height)
 yv24ri = inpaintUV(y8ri, yv24r.UToY8, yv24r.VToY8, frame)
 resizer = mosaic_fuwafuwa ? "BilinearResize" : "PointResize"
 
-# トップレベルのローカル変数にしないとランタイム内から覗けない？ ScriptClip の第一引数の動画オブジェクトにスコープが付随してる？
-framerate_ratio = 30.0 / yv24r.framerate
-letter_height = 20
-wave_countdown_info_pos_x = int(wave_countdown_info_pos_x / 2)
-wave_tol = tolerance + 8
-wave_reward_info_height = 50
-wave_prev_status = False
-wave_reward_display_count = 0
-wave_detection_thresh = 0
-wave_fragment_limit = 100.0
-wave_fragment_count = 0
-wave_suspend_limit = 500.0
-wave_suspend_count = wave_suspend_limit / 10
-wave_title_flash = y8r.Crop(0, wave_title_pos - letter_height / 2, 16 * 10, letter_height)
-wave_reward_info = yv24r.Crop(0, wave_reward_info_pos - letter_height / 2, 0, letter_height)
-wave_countdown_info = yv24r.Crop(wave_countdown_info_pos_x, wave_countdown_info_pos_y, 16 * 6, letter_height) \
-    .MaskHS(minSat=30, maxSat=100, startHue=Max(0, 290 - tolerance), endHue=Min(360, 305 + tolerance), coring=false)
+detect_wave_result ? Eval("""
+    # トップレベルのローカル変数にしないとランタイム内から覗けない？
+    letter_height = 20
+   
+    source_wh_info = "(movie width: " + String(source.width) + " height: " +  String(source.height) + ")"
+    crop_height_limit = yv24r.height - letter_height * 2
+    Assert(wave_reward_info_pos < crop_height_limit, "wave_reward_is too large " + source_wh_info)
+    Assert(wave_title_pos < crop_height_limit, "wave_title_pos is too large " + source_wh_info)
+    Assert(wave_countdown_info_pos_y < crop_height_limit, "wave_countdown_info_pos_y is too large " + source_wh_info)
+    Assert(wave_result_h + wave_result_pos < crop_height_limit, "wave_result_h or wave_result_pos is too large " + source_wh_info)
+    Assert(wave_countdown_info_pos_x + 16 * 6 * 2 < source.width, "wave_countdown_info_pos_x is too large " + source_wh_info)
+
+    framerate_ratio = 30.0 / yv24r.framerate
+    wave_countdown_info_pos_x = int(wave_countdown_info_pos_x / 2)
+    wave_tol = tolerance + 8
+    wave_reward_info_height = 50
+    wave_prev_status = False
+    wave_reward_display_count = 0
+    wave_detection_thresh = 0
+    wave_fragment_limit = 100.0
+    wave_fragment_count = 0
+    wave_suspend_limit = 500.0
+    wave_suspend_count = wave_suspend_limit / 10
+
+    wave_title_flash = y8r.Crop(0, wave_title_pos - letter_height / 2, 16 * 10, letter_height)
+    wave_reward_info = yv24r.Crop(0, wave_reward_info_pos - letter_height / 2, 0, letter_height)
+    wave_countdown_info = yv24r.Crop(wave_countdown_info_pos_x, wave_countdown_info_pos_y, 16 * 6, letter_height) \
+        .MaskHS(minSat=30, maxSat=100, startHue=Max(0, 290 - tolerance), endHue=Min(360, 305 + tolerance), coring=false)
+""") : NOP
 
 header = Apply(use_fast_color_search ? "nameHeaderMaskYVFast" : "nameHeaderMaskYV", yv24ri, y8r, luma_threshold, tolerance)
 findNameHeader(y8r, header, frame, tolerance, line_height)
