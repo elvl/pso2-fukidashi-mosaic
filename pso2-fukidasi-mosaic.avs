@@ -151,6 +151,16 @@ force_fps ‚ğ True ‚É‚·‚é‚ÆA‹­§“I‚É truncated_fps ‚ÉƒtƒŒ[ƒ€ƒŒ[ƒg‚ğØ‚è‹l‚ß‚Ü‚
 ‚Ç‚¤‚µ‚Ä‚àd‚¢‚Ìƒ`ƒFƒbƒN‚âŒ³“®‰æ‚ª 60fps “™‚Ì‚Ég‚¦‚é‚©‚à‚µ‚ê‚Ü‚¹‚ñ
 */
 
+crop_top = 0            # ã
+crop_bottom = 0         # ‰º
+crop_left = 0           # ¶
+crop_right = 0          # ‰E
+
+/*
+“®‰æ‚ÉƒEƒBƒ“ƒhƒE˜g‚È‚Ç‚Ì¨‚ª‚ ‚éê‡‚Éã‰º¶‰E‚ğw’è px Ø‚è—‚Æ‚µ‚Ü‚·
+“®‰æƒtƒH[ƒ}ƒbƒg‚É‚æ‚Á‚Ä‚ÍƒNƒƒbƒv‚µ‚½Œ‹‰Ê‚âw’è‚ªŠï”‚¾‚Æ‚¨‚±‚ç‚ê‚Ü‚·‚Ì‚ÅA‚à‚µƒGƒ‰[‚ªo‚½‚ç‹ô”‚Åw’è‚µ‚Ä‰º‚³‚¢
+*/
+
 /* --------------------------------------------------------------------------------------
 UI ŠÖŒW
 =============== */
@@ -318,7 +328,7 @@ stack_test = False
 disp_info = False
 
 #-----------------------------------------------------------------------------------------------------------
-source = loadMedia(movie, prefer_pixel_type, Float(fps))
+source = loadMedia(movie, prefer_pixel_type, Float(fps)).Crop(crop_left, crop_top, -crop_right, -crop_bottom, align=True)
 source.AssumeFrameBased.modulo(32)
 force_fps ? ChangeFPS(truncated_fps) : NOP
 
