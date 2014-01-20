@@ -342,6 +342,14 @@ frame = nameFrameMaskYV(yv24r, y8ri, luma_threshold, tolerance, line_height)
 yv24ri = inpaintUV(y8ri, yv24r.UToY8, yv24r.VToY8, frame)
 resizer = mosaic_fuwafuwa ? "BilinearResize" : "PointResize"
 
+wave_flush_status = """
+    wave_reward_display_count = 0
+    wave_prev_status = False
+    wave_reward_display_count = 0
+    wave_detection_thresh = 0
+    wave_suspend_count = 0
+    wave_fragment_count = 0"""
+    
 detect_wave_result ? Eval("""
     letter_height = 20
    
@@ -357,13 +365,9 @@ detect_wave_result ? Eval("""
     wave_countdown_info_pos_x = int(wave_countdown_info_pos_x / 2)
     wave_tol = tolerance + 8
     wave_reward_info_height = 50
-    wave_prev_status = False
-    wave_reward_display_count = 0
-    wave_detection_thresh = 0
     wave_fragment_limit = 100.0
-    wave_fragment_count = 0
     wave_suspend_limit = 300.0
-    wave_suspend_count = 0
+    wave_current_frame_prev = 0
 
     wave_mask_prototype = BlankClip(width=yv24r.width, height=yv24r.height, length=360, color=$FFFFFF, pixel_type="Y8", fps=30) \
         .FadeIn0(10).FadeOut0(30).KillAudio.ChangeFPS(yv24r.framerate)
@@ -373,7 +377,7 @@ detect_wave_result ? Eval("""
     wave_reward_info = yv24r.Crop(0, wave_reward_info_pos - letter_height / 2, 0, letter_height)
     wave_countdown_info = yv24r.Crop(wave_countdown_info_pos_x, wave_countdown_info_pos_y, 16 * 6, letter_height) \
         .MaskHS(minSat=30, maxSat=100, startHue=Max(0, 290 - tolerance), endHue=Min(360, 305 + tolerance), coring=false)
-""") : NOP
+""" + wave_flush_status) : NOP
 
 header = Apply(use_fast_color_search ? "nameHeaderMaskYVFast" : "nameHeaderMaskYV", yv24ri, y8r, luma_threshold, tolerance)
 findNameHeader(y8r, header, frame, tolerance, line_height)
@@ -424,6 +428,11 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
     y8
 
     ScriptClip("""
+        seeked = wave_current_frame_prev + 1 != current_frame
+        wave_current_frame_prev = current_frame
+        
+        seeked ? Eval(wave_flush_status) : NOP
+        
         wave_reward_info
         reward_displaying_now = ((wave_detection_thresh > 70 || wave_reward_display_count > 0) \
             && (YPlaneMedian > 40 - wave_tol) && (YPlaneMedian < 40 + wave_tol) \
@@ -453,6 +462,7 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
     test ? ScriptClip("""
         Subtitle( \
         " current_frame: " + String(current_frame) + \
+        "\n seeked: " + String(seeked) + \
         "\n display_count: " + String(wave_reward_display_count) + \
         "\n suspend_count: " + String(wave_suspend_count) + \
         "\n thresh: " + String(wave_detection_thresh) + \
