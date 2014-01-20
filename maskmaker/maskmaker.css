@@ -1,0 +1,104 @@
+
+fieldset ul{
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+fieldset li,
+fieldset p {
+    display: block;
+    margin: 0;
+    padding: 0;
+    margin: .5em 0em;
+    white-space: nowrap;
+}
+
+#parameters fieldset {
+    float: left;
+    padding: 0 .5em .5em .5em;
+    margin: .5em;
+}
+
+#parameters:after {
+    content: ''; 
+    display: block; 
+    clear: both;
+}
+
+input {
+    font-family: 'ヒラギノ角ゴ Pro W3', Osaka, 'メイリオ', sans-serif;
+    font-weight: 100;
+    margin: 0 .5em;
+    vertical-align: middle;
+}
+
+input[type=range],
+label {
+    display: inline-block;
+}
+
+label {
+    width: 5em;
+}
+
+input[type=button] {
+    margin: 0 .6em 0 0; 
+}
+
+input[type=number] {
+    width: 3em;
+}
+
+input[type=range] {
+    width: 255px;
+}
+
+#file-drop {
+    border-radius: 4px;
+    border: 3px solid #f0f0f0;
+    padding: 1em;
+    width: auto;
+    margin: 2em;
+    text-align: center;
+    color: #808080;
+    background: fcfcfc;
+}
+
+#preview {
+    position: relative;
+    margin-bottom: 1em;
+}
+
+#preview canvas {
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#preview #parameters {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: rgba(255, 255, 255, 1.0);
+    font-size: 90%;
+    max-height: 300px;
+    width: 420px;
+    overflow-y: scroll;
+}
+
+p#apply {
+    position: absolute;
+    top: 320px;
+    left: 8px;
+    padding: .5em 2em;
+    text-align: center;
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    text-shadow: 1px 1px 0 #ffffff;
+    border-radius: 3px;
+    background: linear-gradient(#ffffff, #e0e0e0);
+}

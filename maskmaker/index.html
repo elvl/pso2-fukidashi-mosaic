@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ますくめーかー</title>
+    <link href="maskmaker.css" rel="stylesheet" type="text/css" />
+    <script src="jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="maskmaker.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h1>ますくめーかー</h1>
+
+<div id="maskmaker">
+    <div id="file-drop">ここにすくりーんしょっとをどろっぷー</div>
+
+    <div id="preview">
+        <img id="image-data" width="600" height="400" />
+        <canvas id="picture" width="600" height="400"></canvas>
+        <canvas id="overlay" width="600" height="400"></canvas>
+
+        <div id="parameters">
+            <form action="#">
+                <fieldset id="party">
+                    <legend>パーティーメンバーの名前</legend>
+                    <ul>
+                        <li>
+                            <label for="party-width">幅</label>
+                            <input type="range" id="party-width" min="50" max="300" value="240" />
+                        </li>
+                        <li>
+                            <label for="party-height">高さ</label>
+                            <input type="range" id="party-height" min="16" max="50" value="21" />
+                        </li>
+                        <li>
+                            <label for="party-span">間隔</label>
+                            <input type="range" id="party-span" min="0" max="100" value="34" />
+                        </li>
+                        <li>
+                            <label for="party-x">位置 x</label>
+                            <input type="range" id="party-x" min="0" max="100" value="50" />
+                        </li>
+                        <li>
+                            <label for="party-y">位置 y</label>
+                            <input type="range" id="party-y" min="0" max="200" value="135" />
+                        </li>
+                        <li>
+                            <label for="party-g">グラデ</label>
+                            <input type="range" id="party-g" min="0" max="100" value="60" />
+                        </li>
+                    </ul>
+                </fieldset>
+
+                <fieldset id="party">
+                    <legend>自分の名前</legend>
+                    <ul>
+                        <li>
+                            <label for="my-width">幅</label>
+                            <input type="range" id="my-width" min="50" max="300" value="210" />
+                        </li>
+                        <li>
+                            <label for="my-height">高さ</label>
+                            <input type="range" id="my-height" min="16" max="50" value="21" />
+                        </li>
+                        <li>
+                            <label for="my-x">位置 x</label>
+                            <input type="range" id="my-x" min="50" max="150" value="92" />
+                        </li>
+                        <li>
+                            <label for="my-y">位置 y</label>
+                            <input type="range" id="my-y" min="0" max="200" value="80" />
+                        </li>
+                        <li>
+                            <label for="my-g">グラデ</label>
+                            <input type="range" id="my-g" min="0" max="100" value="40" />
+                        </li>
+                    </ul>
+                </fieldset>
+
+                <fieldset id="chat">
+                    <legend>チャットウィンドウ</legend>
+                    <ul>
+                        <li>
+                            <label for="chat-width">幅</label>
+                            <input type="range" id="chat-width" min="200" max="500" value="330" />
+                        </li>
+                        <li>
+                            <label for="chat-height">高さ</label>
+                            <input type="range" id="chat-height" min="200" max="600" value="385" />
+                        </li>
+                        <li>
+                            <label for="chat-g">グラデ</label>
+                            <input type="range" id="chat-g" min="0" max="100" value="35" />
+                        </li>
+                    </ul>
+                </fieldset>
+
+                <fieldset id="item">
+                    <legend>アイテム取得とかのアレ</legend>
+                    <ul>
+                        <li>
+                            <label for="item-width">幅</label>
+                            <input type="range" id="item-width" min="50" max="500" value="230" />
+                        </li>
+                        <li>
+                            <label for="item-x">位置 x</label>
+                            <input type="range" id="item-x" min="0" max="500" value="230" />
+                        </li>
+                        <li>
+                            <label for="item-y">位置 y</label>
+                            <input type="range" id="item-y" min="50" max="300" value="115" />
+                        </li>
+                    </ul>
+                </fieldset>
+            </form>
+        </div>
+
+        <p id="apply">これでよし</p>
+    </div>
+</div>
+
+</body>
+</html>
