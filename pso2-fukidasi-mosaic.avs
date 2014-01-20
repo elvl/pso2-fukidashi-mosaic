@@ -333,7 +333,6 @@ yv24ri = inpaintUV(y8ri, yv24r.UToY8, yv24r.VToY8, frame)
 resizer = mosaic_fuwafuwa ? "BilinearResize" : "PointResize"
 
 detect_wave_result ? Eval("""
-    # トップレベルのローカル変数にしないとランタイム内から覗けない？
     letter_height = 20
    
     source_wh_info = "(movie width: " + String(source.width) + " height: " +  String(source.height) + ")"
@@ -353,9 +352,13 @@ detect_wave_result ? Eval("""
     wave_detection_thresh = 0
     wave_fragment_limit = 100.0
     wave_fragment_count = 0
-    wave_suspend_limit = 500.0
-    wave_suspend_count = wave_suspend_limit / 10
+    wave_suspend_limit = 300.0
+    wave_suspend_count = 0
 
+    wave_mask_prototype = BlankClip(width=yv24r.width, height=yv24r.height, length=360, color=$FFFFFF, pixel_type="Y8", fps=30) \
+        .FadeIn0(10).FadeOut0(30).KillAudio.ChangeFPS(yv24r.framerate)
+    wave_mask_full_length = wave_mask_prototype.BlankClip(length=yv24r.framecount).KillAudio.mt_binarize(127)
+   
     wave_title_flash = y8r.Crop(0, wave_title_pos - letter_height / 2, 16 * 10, letter_height)
     wave_reward_info = yv24r.Crop(0, wave_reward_info_pos - letter_height / 2, 0, letter_height)
     wave_countdown_info = yv24r.Crop(wave_countdown_info_pos_x, wave_countdown_info_pos_y, 16 * 6, letter_height) \
@@ -408,36 +411,29 @@ return last
 
 #-----------------------------------------------------------------------------------------------------------
 function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wave_result_h", bool "test") {
-    BlankClip(y8, color=$000000).mt_binarize(127)
+    y8
 
     ScriptClip("""
-        result_mask = last
-    
         wave_reward_info
         reward_displaying_now = ((wave_detection_thresh > 70 || wave_reward_display_count > 0) \
             && (YPlaneMedian > 40 - wave_tol) && (YPlaneMedian < 40 + wave_tol) \
                 && (UPlaneMedian > 135 - wave_tol) && (UPlaneMedian < 135 + wave_tol) \
-                    && (VPlaneMedian > 120 - wave_tol) && (VPlaneMedian < 120 + wave_tol)) ? \
-                        True : False
+                    && (VPlaneMedian > 120 - wave_tol) && (VPlaneMedian < 120 + wave_tol))
         
-        reward_display_end_now = (wave_prev_status && !reward_displaying_now && wave_reward_display_count > 50) ? True : False
+        reward_display_end_now = wave_prev_status && !reward_displaying_now && wave_reward_display_count > 50
+        wave_reward_display_count = reward_displaying_now ? wave_reward_display_count + framerate_ratio : 0
         wave_prev_status = reward_displaying_now
-        wave_reward_display_count = reward_displaying_now ? wave_reward_display_count + framerate_ratio : Max(0, wave_reward_display_count - framerate_ratio)
-        wave_reward_display_count = reward_display_end_now ? 360 : wave_reward_display_count
         
-        _thresh_increase = (((wave_title_flash.AverageLuma > 240) ? 20 : 0) + ((wave_countdown_info.AverageLuma > 70) ? 1 : 0)) * framerate_ratio
-        wave_suspend_count = reward_display_end_now ? wave_suspend_limit : (_thresh_increase == 0) ? Max(0, wave_suspend_count - framerate_ratio) : wave_suspend_count
-        wave_fragment_count = (wave_suspend_count == 0 && _thresh_increase > 0) ? wave_fragment_limit : Max(0, wave_fragment_count - framerate_ratio)
-        wave_detection_thresh = (wave_fragment_count > 0) ? wave_detection_thresh + _thresh_increase : 0
+        wave_mask_full_length = reward_display_end_now ? \
+            wave_mask_full_length.Trim(0, current_frame) + wave_mask_prototype + wave_mask_full_length.Trim(current_frame + wave_mask_prototype.framecount, 0) : wave_mask_full_length
         
-        result_mask
-        (wave_reward_display_count == 0 || reward_displaying_now) ? NOP : \
-            (wave_reward_display_count > 355) ? ColorYUV(off_y=255 - int(wave_reward_display_count - 355) * 50) : \
-                (wave_reward_display_count > 30) ? ColorYUV(off_y=255) : \
-                    (wave_reward_display_count > 0) ? ColorYUV(off_y=int(wave_reward_display_count) * 9) : NOP
-            
-        # ランタイムスクリプトの最後に last を明示的にかいておくだけで何故か早くなる
-        last
+        countdown_info_t = wave_countdown_info.AverageLuma > 70
+        thresh_increase = (((wave_title_flash.AverageLuma > 240) ? 20 : 0) + (countdown_info_t ? 1 : 0)) * framerate_ratio
+        wave_fragment_count = (wave_suspend_count > 200) ? 0 : (thresh_increase > 0) ? wave_fragment_limit : Max(0, wave_fragment_count - framerate_ratio)
+        wave_detection_thresh = (wave_fragment_count > 0) ? wave_detection_thresh + thresh_increase : 0
+        wave_suspend_count = countdown_info_t ? Min(wave_suspend_limit, wave_suspend_count + framerate_ratio) : Max(0, wave_suspend_count - framerate_ratio)
+
+        wave_mask_full_length
     """)
     
     Letterbox(wave_result_pos, height - wave_result_h - wave_result_pos, int(width / 4), int(width / 2))
@@ -446,8 +442,9 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
     
     test ? ScriptClip("""
         Subtitle( \
-        " display_count: " + String(wave_reward_display_count) + \
-        "\n suspend: " + String(wave_suspend_count) + \
+        " current_frame: " + String(current_frame) + \
+        "\n display_count: " + String(wave_reward_display_count) + \
+        "\n suspend_count: " + String(wave_suspend_count) + \
         "\n thresh: " + String(wave_detection_thresh) + \
         "\n fragment: " + String(wave_fragment_count), lsp=20, text_color=$FFFFFF, halo_color=$808080, y=20)
         
