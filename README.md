@@ -34,7 +34,7 @@ Avisynth を導入すると、スクリプトを記述したファイルを動�
 
 ##masktools 2 のインストール
 
-masktools 2 は Avisynth のプラグインです。ダウンロードは公開元は http://manao4.free.fr/ ですがわかりにくいです。masktools-v2.0a48.zip がこれを書いている時点での最新です。
+masktools 2 は Avisynth のプラグインです。公開元は http://manao4.free.fr/ ですがわかりにくいです。masktools-v2.0a48.zip がこれを書いている時点での最新です。
 
 直接リンクは [http://manao4.free.fr/masktools-v2.0a48.zip](http://manao4.free.fr/masktools-v2.0a48.zip)
 
