@@ -518,7 +518,7 @@ function modulo(clip "clip", int "divisor") {
 
 function unModulo(clip "clip", clip "source_clip", bool "align") {
     clip
-    Default(align, False)
+    align = Default(align, False)
     Crop(0, 0, source_clip.width - width, 0, align=align)
     return last
 }
@@ -545,7 +545,7 @@ function _inpaintUV(clip "y8", clip "thresh") {
 
 function shiftVertical(clip "clip", int "offset", bool "align")
 {
-    Default(align, False)
+    align = Default(align, False)
 
     clip
     (offset > 0) ? Crop(0, 0, 0, -offset, align=align).AddBorders(0, offset, 0, 0) : Crop(0, -offset, 0, 0, align=align).AddBorders(0, 0, 0, -offset)
@@ -553,7 +553,7 @@ function shiftVertical(clip "clip", int "offset", bool "align")
 
 function shiftHorizontal(clip "clip", int "offset", bool "align")
 {
-    Default(align, False)
+    align = Default(align, False)
 
     clip
     (offset > 0) ? Crop(0, 0, -offset, 0, align=align).AddBorders(offset, 0, 0, 0) : Crop(-offset, 0, 0, 0, align=align).AddBorders(0, 0, -offset, 0)
