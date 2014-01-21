@@ -111,6 +111,21 @@ masktools 2 のインストール:
 */
 
 /* --------------------------------------------------------------------------------------
+設定値の確認
+=============== */
+
+disp_settings = False
+
+/*
+[True / False] 
+True  : 座標関係の設定を画面に表示します
+False : なにもしないでいつもどおり (デフォルト)
+
+この機能を有効にすると、検出関係の座標の設定を画面に表示します。有効な位置になっているか画面上で確認することができます
+この機能は大変重いので確認するときのみ True にし、必要ない時は False にするようにしてください
+*/
+
+/* --------------------------------------------------------------------------------------
 読み込む動画
 =============== */
 
@@ -375,6 +390,7 @@ detect_wave_result ? Eval("""
     Assert(wave_countdown_info_pos_x + 16 * 6 * 2 < source.width, "wave_countdown_info_pos_x is too large " + source_wh_info)
 
     framerate_ratio = 30.0 / yv24r.framerate
+    wave_countdown_info_pos_x_o = wave_countdown_info_pos_x
     wave_countdown_info_pos_x = int(wave_countdown_info_pos_x / 2)
     wave_tol = tolerance + 8
     wave_reward_info_height = 50
@@ -420,6 +436,9 @@ mosaic = Apply(resizer, last, yv24.width, yv24.height)
 
 !test ? mt_merge(yv24, mosaic, mask_yuv, y=3, u=3, v=3).unModulo(source) : \
     mt_merge(yv24r, mask_r.ConvertToYV24, mask_yuv_r, y=3, u=3, v=3)
+
+disp_settings ? dispSettings(wave_reward_info_pos, wave_title_pos, wave_countdown_info_pos_x_o, \
+    wave_countdown_info_pos_y, ui_height, letter_height) : NOP
 
 test && stack_test ? StackHorizontal(mask_y, last) : NOP
 
@@ -733,6 +752,38 @@ function nameFrameMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tole
     return last
 }
 
+function dispSettings(clip "yv24", int "rp", int "tp", int "cx", int "cy", int "uh", int "lh")
+{
+    yv24 = yv24.Levels(0, 1.0, 255, 0, 128, coring=false)
+    
+    yv24
+    _drawHorizontalLine(last, rp, "wave_reward_info_pos", "「ウェーブの報酬を受け取りました」 の帯の中心")
+    _drawHorizontalLine(last, uh, "ui_height", "これより下側はふきだしの検出に含めません (パレット等の誤爆防止)", upper=True)
+    _drawHorizontalLine(last, tp, "wave_title_pos", "wave 終了時に 「WAVE 1 CLEAR」 とフラッシュする文字の中心")
+    
+    mt_logic(last, yv24.BlankClip(color=$FFFFFF).Letterbox(cy, height - cy - lh, cx, width - cx - 16 * 6 * 2, color=$000000) \
+        .ColorYUV(levels="TV->PC"), mode="or", y=3, u=2, v=2)
+    
+    Subtitle("↑ ウェーブ終了/開始まであと ↑\n" + \
+        "wave_countdown_info_pos_x: " + String(cx) + \
+        "\nwave_countdown_info_pos_y: " + String(cy), \
+        y=cy + lh + 5, x=width - 10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$000000, align=9)
+        
+    return last
+}
+
+function _drawHorizontalLine(clip "yv24", int "y", string "name", string "desc", bool "upper")
+{
+    yv24
+    upper = Default(upper, False)
+    desc = Default(desc, "")
+    y2 = upper ? height - y : y
+
+    yv24.BlankClip(color=$FFFFFF).Letterbox(y2 - 1, height - y2 - 1, 0, 0, color=$000000).ColorYUV(levels="TV->PC")
+    mt_logic(yv24, last, mode="or", y=3, u=2, v=2)
+    Subtitle("↑ " + name + ": " + String(y) + " ↑\n" + desc, y=y2 + 5, x=10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$000000)
+    return last
+}
 
 __END__
 
