@@ -17,8 +17,8 @@ AvsPmod を導入すると楽かもしれません。文字コードは ANSI か SJIS にする必要があり
 Avisynth について簡単な説明:
     
     Avisynth はフレームサーバーです。一般的な動画では、動画の再生には動画ファイルが必要です。
-    対して、フレームサーバーは動画ファイルを生成したり保存することなくリアルタイムに動画を生成して
-    動画プレイヤーや動画編集アプリーケーションに渡すことができます。
+    対して、フレームサーバーは動画ファイルを保存することなくリアルタイムに動画を生成して動画プレイヤーや
+    動画編集アプリーケーションに渡すことができます。
     
     Avisynth では、どのように動画を生成するのかをスクリプトでテキストファイルに記述します。
     今読んでいるこれがそうです。スクリプトを記述したテキストファイルには avs という拡張子がついています。
@@ -354,6 +354,7 @@ luma_threshold = 160 # これをいじると全てがうまく行かなくなりますたぶん
 test = False
 stack_test = False
 disp_info = False
+error_msg = ""
 
 #-----------------------------------------------------------------------------------------------------------
 source = loadMedia(movie, prefer_pixel_type, Float(fps)).Crop(crop_left, crop_top, -crop_right, -crop_bottom, align=True)
@@ -378,17 +379,23 @@ wave_flush_status = """
     wave_suspend_count = 0
     wave_fragment_count = 0"""
     
-detect_wave_result ? Eval("""
+(detect_wave_result || disp_settings) ? Eval("""
     letter_height = 20
-   
-    source_wh_info = "(movie width: " + String(source.width) + " height: " +  String(source.height) + ")"
     crop_height_limit = yv24r.height - letter_height * 2
-    Assert(wave_reward_info_pos < crop_height_limit, "wave_reward_info_pos is too large " + source_wh_info)
-    Assert(wave_title_pos < crop_height_limit, "wave_title_pos is too large " + source_wh_info)
-    Assert(wave_countdown_info_pos_y < crop_height_limit, "wave_countdown_info_pos_y is too large " + source_wh_info)
-    Assert(wave_result_h + wave_result_pos < crop_height_limit, "wave_result_h or wave_result_pos is too large " + source_wh_info)
-    Assert(wave_countdown_info_pos_x + 16 * 6 * 2 < source.width, "wave_countdown_info_pos_x is too large " + source_wh_info)
+    
+    error_msg = (wave_reward_info_pos < crop_height_limit) ? error_msg : error_msg + "wave_reward_info_pos が大きすぎます。\n"
+    error_msg = (wave_title_pos < crop_height_limit) ? error_msg : error_msg + "wave_title_pos が大きすぎます。\n"
+    error_msg = (wave_countdown_info_pos_y < crop_height_limit) ? error_msg : error_msg + "wave_countdown_info_pos_y が大きすぎます。\n"
+    error_msg = (wave_result_h + wave_result_pos < crop_height_limit) ? error_msg : error_msg + "wave_result_h か wave_result_pos が大きすぎます。\n"
+    error_msg = (wave_countdown_info_pos_x + 16 * 6 * 2 < source.width) ? error_msg : error_msg + "wave_countdown_info_pos_x が大きすぎます。\n"
+    
+    safe_geo_settings = error_msg.StrLen == 0
+    error_msg = !safe_geo_settings ? error_msg + "\n無効な設定が検出されました。座標を動画の有効な範囲内におさめて下さい。\n" : error_msg
+    error_msg = (detect_wave_result && !safe_geo_settings) ? error_msg + "wave 終了検出は無効にされました。\n" : error_msg
+    error_msg = (disp_settings && !safe_geo_settings) ? error_msg + "設定値の確認は無効にされました。\n" : error_msg
+""") : NOP
 
+(detect_wave_result && safe_geo_settings) ? Eval("""
     framerate_ratio = 30.0 / yv24r.framerate
     wave_countdown_info_pos_x_o = wave_countdown_info_pos_x
     wave_countdown_info_pos_x = int(wave_countdown_info_pos_x / 2)
@@ -413,7 +420,7 @@ findNameHeader(y8r, header, frame, tolerance, line_height)
 Levels(0, mosaic_strength_2, Max(0, 255 - mosaic_strength_1), 0, 255, coring=false)
 mt_logic(last, last.BlankClip(color=$FFFFFF).Letterbox(5, ui_height, 5, 5).mt_binarize(127), mode="and")
 
-mosaic_mask = detect_wave_result ? findWaveEnd(y8r, last, wave_result_pos, wave_result_h, test) : last
+mosaic_mask = (detect_wave_result && safe_geo_settings) ? findWaveEnd(y8r, last, wave_result_pos, wave_result_h, test) : last
 
 ImageSource(ScriptDir + "\mask\" + ui_mask, use_DevIL=true, start=0, end=1, pixel_type="RGB32").ConvertToY8(matrix="PC.601").KillAudio
 resizeUiMask(source, last, mode="auto").modulo(32).PointResize(yv24r.width, yv24r.height)
@@ -437,7 +444,7 @@ mosaic = Apply(resizer, last, yv24.width, yv24.height)
 !test ? mt_merge(yv24, mosaic, mask_yuv, y=3, u=3, v=3).unModulo(source) : \
     mt_merge(yv24r, mask_r.ConvertToYV24, mask_yuv_r, y=3, u=3, v=3)
 
-disp_settings ? dispSettings(wave_reward_info_pos, wave_title_pos, wave_countdown_info_pos_x_o, \
+(disp_settings && safe_geo_settings) ? dispSettings(wave_reward_info_pos, wave_title_pos, wave_countdown_info_pos_x_o, \
     wave_countdown_info_pos_y, ui_height, letter_height) : NOP
 
 test && stack_test ? StackHorizontal(mask_y, last) : NOP
@@ -452,6 +459,7 @@ out_is_fullscale ? NOP : ColorYUV(levels="PC->TV")
 (source.isYUY2 && pixel_type == "YUY2") ? ConvertBackToYUY2 : Eval("ConvertTo" + pixel_type + """(last, matrix="""" + matrix + """")""")
 
 disp_info ? info : NOP
+(error_msg.StrLen == 0) ? NOP : Subtitle(error_msg, y=10, x=10, lsp=24, font="メイリオ", size=24, text_color=$FFFF00, halo_color=$000000)
 
 return last
 
