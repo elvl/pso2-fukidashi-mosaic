@@ -604,7 +604,8 @@ function resizeUiMask(clip "clip", clip "ui_mask", string "mode")
 function findNameHeader(clip "y8", clip "header", clip "frame", int "tolerance", int "line_height")
 {    
     smoothBlur(header, threshold=Max(30, 80 - tolerance), w_ratio=8, h_ratio=1)
-    Blur(1.0, 0.0).mt_binarize(170).Blur(0.0, 1.0).mt_binarize(170).Invert.Invert
+    Blur(1.0, 0.0).mt_binarize(170).Blur(0.0, 1.0).mt_binarize(170).mt_expand(mode="horizontal")
+    
     header_r = last
     header = header_r.Invert
     frame_r = frame.Invert
@@ -617,7 +618,8 @@ function findNameHeader(clip "y8", clip "header", clip "frame", int "tolerance",
     mt_logic(last, frame_r.shiftVertical(-line_height), mode="and")
     mt_logic(last, header, mode="and")
     mt_logic(last, header_r.shiftVertical(-line_height), mode="and")
-    upper_line = cleanMask(last)
+    Blur(0.0, 1.0).mt_binarize(170).Blur(1.0, 0.0).mt_binarize(170)
+    upper_line = last
     
     frame = mt_logic(frame, frame.shiftVertical(-1, align=True), mode="or")
     header.mt_expand(mode="horizontal")
@@ -629,7 +631,8 @@ function findNameHeader(clip "y8", clip "header", clip "frame", int "tolerance",
     mt_logic(last, frame.Invert.shiftVertical(line_height * 2), mode="and")
     mt_logic(last, header, mode="and")
     mt_logic(last, header.Invert.shiftVertical(line_height * 2), mode="and")
-    bottom_line = cleanMask(last)
+    Blur(0.0, 1.0).mt_binarize(170).Blur(1.0, 0.0).mt_binarize(170)
+    bottom_line = last
     
     upper_line
     BilinearResize(width, int(height / line_height / 6)).BilinearResize(width, height)
@@ -643,8 +646,9 @@ function findNameHeader(clip "y8", clip "header", clip "frame", int "tolerance",
     
     mt_logic(upper_line, bottom_line, mode="or")
     mt_logic(last, smoothBlur(header, threshold=190, w_ratio=8, h_ratio=8).Invert, mode="and")
-    mt_logic(last, last.shiftHorizontal(-line_height * 2 - 2), mode="or")
-    BilinearResize(int(width / 10.0) * 2, int(height / 10.0) * 2).BilinearResize(width, height)
+    mt_logic(last, last.shiftHorizontal(-line_height * 2 - 1), mode="or")
+    mt_expand(mode="horizontal")
+    BilinearResize(int(width / 8.0) * 2, int(height / 10.0) * 2).BilinearResize(width, height)
     
     return last
 }
@@ -658,9 +662,10 @@ function smoothBlur(clip "y8", int "threshold", int "w_ratio", int "h_ratio")
 function cleanMask(clip "y8")
 {    
     y8
-    Blur(1.58, 0.0).Blur(1.0, 1.0).mt_binarize(170)
-    Blur(0.8, 0.5).mt_binarize(170)
-    mt_expand(mode="horizontal").mt_expand(mode="horizontal")
+    mt_inpand(mode="horizontal")
+    Blur(0.0, 1.0).mt_binarize(170)
+    Blur(1.0, 0.0).mt_binarize(170)
+    mt_expand(mode="horizontal")
     
     return Invert.Invert # âΩåÃÇ©ëÅÇ≠Ç»ÇÈ
 }
