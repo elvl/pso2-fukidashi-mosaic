@@ -4,95 +4,14 @@ To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0
 
 Author: @6elz
 
-
-‚Í‚¶‚ß‚É
 --------------------------------------------------------------------------------------
-‚±‚Ì Avisynth ƒXƒNƒŠƒvƒg‚Í PSO2 ‚Ì“®‰æ‚Ì‚«o‚µ‚Éƒ‚ƒUƒCƒN‚ð‚©‚¯‚Ü‚·B
+ƒ}ƒjƒ…ƒAƒ‹:
 
-‚±‚ÌƒXƒNƒŠƒvƒg‚Ì“®ì‚É‚ÍAAvisynth 2.6.0 ˆÈã‚Æ masktools 2.0 ‚ª•K—v‚Å‚·B
-
-ˆê‰žƒƒ‚’ ‚Å•ÒW‚Å‚«‚Ü‚·‚ªAƒR[ƒh‚ÌƒnƒCƒ‰ƒCƒg‚ª‚È‚¢‚ÆÝ’è‚¾‚¯‚Å‚àŒ©‚Ã‚ç‚¢‚Ì‚Å“K“–‚ÈƒGƒfƒBƒ^‚ª–³‚¢‚Ì‚Å‚ ‚ê‚Î
-AvsPmod ‚ð“±“ü‚·‚é‚ÆŠy‚©‚à‚µ‚ê‚Ü‚¹‚ñB•¶ŽšƒR[ƒh‚Í ANSI ‚© SJIS ‚É‚·‚é•K—v‚ª‚ ‚è‚Ü‚·B
-
-Avisynth ‚É‚Â‚¢‚ÄŠÈ’P‚Èà–¾:
-    
-    Avisynth ‚ÍƒtƒŒ[ƒ€ƒT[ƒo[‚Å‚·Bˆê”Ê“I‚È“®‰æ‚Å‚ÍA“®‰æ‚ÌÄ¶‚É‚Í“®‰æƒtƒ@ƒCƒ‹‚ª•K—v‚Å‚·B
-    ‘Î‚µ‚ÄAƒtƒŒ[ƒ€ƒT[ƒo[‚Í“®‰æƒtƒ@ƒCƒ‹‚ð•Û‘¶‚·‚é‚±‚Æ‚È‚­ƒŠƒAƒ‹ƒ^ƒCƒ€‚É“®‰æ‚ð¶¬‚µ‚Ä“®‰æƒvƒŒƒCƒ„[‚â
-    “®‰æ•ÒWƒAƒvƒŠ[ƒP[ƒVƒ‡ƒ“‚É“n‚·‚±‚Æ‚ª‚Å‚«‚Ü‚·B
-    
-    Avisynth ‚Å‚ÍA‚Ç‚Ì‚æ‚¤‚É“®‰æ‚ð¶¬‚·‚é‚Ì‚©‚ðƒXƒNƒŠƒvƒg‚ÅƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚É‹Lq‚µ‚Ü‚·B
-    ¡“Ç‚ñ‚Å‚¢‚é‚±‚ê‚ª‚»‚¤‚Å‚·BƒXƒNƒŠƒvƒg‚ð‹Lq‚µ‚½ƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚É‚Í avs ‚Æ‚¢‚¤Šg’£Žq‚ª‚Â‚¢‚Ä‚¢‚Ü‚·B
-    
-    Avisynth ‚ð“±“ü‚·‚é‚ÆAƒXƒNƒŠƒvƒg‚ð‹Lq‚µ‚½ƒtƒ@ƒCƒ‹‚ð“®‰æ‚ðÄ¶‚Å‚«‚é—lX‚ÈƒAƒvƒŠƒP[ƒVƒ‡ƒ“A
-    —á‚¦‚ÎƒƒfƒBƒAƒvƒŒƒCƒ„[‚â Aviutl, VirtualDub “™‚É“Ç‚Ýž‚Ü‚¹‚é‚±‚Æ‚ª‚Å‚«‚é‚æ‚¤‚É‚È‚è‚Ü‚·B
-    (ŒÃ‚¢ Aviutl ‚Å‚Í‚»‚Ì‚Ü‚Ü‚Å‚ÍŠJ‚¯‚Ü‚¹‚ñBÅV‚Ì Aviutl ‚ð“±“ü‚µ‚Ä‰º‚³‚¢)
-    
-    ƒXƒNƒŠƒvƒg‚ª“®‰æÄ¶ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚É“Ç‚Ýž‚Ü‚ê‚½ŽžA— ‘¤‚Å Avisynth ‚ªŠˆ“®‚ðŽn‚ß‚Ü‚·B
-    ƒXƒNƒŠƒvƒg‚Ì“à—e‚É]‚Á‚ÄˆêƒRƒ}ˆêƒRƒ}‚ð¶¬‚µƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚É“n‚µ‚Ü‚·B
-    ‚±‚Ìˆê˜A‚Ì—¬‚ê‚ÍA‘S‚ÄŽ©“®“I‚ÉA“§‰ß“I‚És‚í‚ê‚é‚Ì‚Åƒ†[ƒU[‚ªˆÓŽ¯‚·‚é•K—v‚Í‚ ‚è‚Ü‚¹‚ñB
-    
-    ‚Å‚·‚©‚çAƒXƒNƒŠƒvƒg‚ðƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚É“Ç‚Ýž‚Ü‚¹‚ÄÄ¶‚â•ÒW‚ð‚·‚é‚Æ‚«‚àA“®‰æ‚Æ“¯‚¶‚æ‚¤‚Éˆµ‚¦‚é‚Å‚µ‚å‚¤B
+    https://github.com/elvl/pso2-fukidashi-mosaic/wiki
 
 
-‚±‚Ìƒtƒ@ƒCƒ‹‚Ìˆµ‚¢•û:
-    ‚±‚Ìƒtƒ@ƒCƒ‹‚Í’P‚È‚éƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚È‚Ì‚ÅAƒoƒbƒNƒAƒbƒv‚âì‹Æ—p‚Ìƒo[ƒWƒ‡ƒ“A‰ð‘œ“xˆá‚¢‚ÌÝ’è‚ª
-    •K—v‚Èê‡AƒRƒs[‚µ‚Ä‘‚â‚µ‚½‚è–¼‘O‚ð•Ï‚¦‚½‚è‚µ‚Ä‘S‚­\‚¢‚Ü‚¹‚ñB’u‚«êŠ‚àD‚«‚ÈêŠ‚Å‚©‚Ü‚¢‚Ü‚¹‚ñB
-
-
-Avisynth 2.6 Œn‚ÌƒCƒ“ƒXƒg[ƒ‹:
-
-    ‚±‚ÌƒXƒNƒŠƒvƒg‚Ì“®ì‚É‚ÍAAvisynth 2.6.0 ˆÈã‚ª•K—v‚Å‚·B2.5 Œn‚Æ 2.6 Œn‚Å‚Í‘å‚«‚­‹@”\·‚ª‚ ‚è‚Ü‚·B
-    2.6 Œn‚Í Alpha ‚Æ‚³‚ê‚Ä‚¢‚Ü‚·‚ª”ñí‚ÉˆÀ’è‚µ‚Ä‚¢‚Ü‚·B
-
-    http://sourceforge.net/projects/avisynth2/files/AviSynth_Alpha_Releases/
-
-    ‚±‚±‚©‚ç 2.6 Œn‚ÌÅV‚Ì‚à‚Ì‚ð DL ‚µ‚ÄƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‰º‚³‚¢B\¬‚Í‘S‚ÄƒfƒtƒHƒ‹ƒg‚Å–â‘è‚ ‚è‚Ü‚¹‚ñB
-    —LŽu‚ª 64bit ”Å‚ðƒrƒ‹ƒh‚µ‚½‚à‚Ì‚ð”ñŒöŽ®‚ÅŒöŠJ‚µ‚Ä‚¢‚Ü‚·‚ª 64bit ”Å‚Å‚Ì“®ì‚ÍŠm”F‚µ‚Ä‚¢‚Ü‚¹‚ñB
-    64bit OS ‚Å‚à 32bit ”Å‚ðƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‘S‚­–â‘è‚ ‚è‚Ü‚¹‚ñB
-
-
-masktools 2 ‚ÌƒCƒ“ƒXƒg[ƒ‹:
-
-    masktools 2 ‚Í Avisynth ‚Ìƒvƒ‰ƒOƒCƒ“‚Å‚·BŒöŠJŒ³‚Í http://manao4.free.fr/ ‚Å‚·‚ª‚í‚©‚è‚É‚­‚¢‚Å‚·
-    masktools-v2.0a48.zip ‚ª‚±‚ê‚ð‘‚¢‚Ä‚¢‚éŽž“_‚Å‚ÌÅV‚Å‚·B 
-    ’¼ÚƒŠƒ“ƒN‚Í http://manao4.free.fr/masktools-v2.0a48.zip
-    
-    ‰ð“€‚µ‚Ä’†‚É‚ ‚é mt_masktools-26.dll ‚¾‚¯‚ðŽæ‚èo‚µAAvisynth ‚ðƒCƒ“ƒXƒg[ƒ‹‚µ‚½ƒtƒHƒ‹ƒ_‚Ì’†‚É‚ ‚é
-    plugins ƒtƒHƒ‹ƒ_‚Ì’¼‰º‚É“ü‚ê‚Ä‰º‚³‚¢B
-    (mt_masktools-25.dll ‚Í 2.5 Œn—p‚È‚Ì‚ÅŽg‚¢‚Ü‚¹‚ñ / 64bit ”Å‚Ì Avisynth ‚ðƒCƒ“ƒXƒg[ƒ‹‚µ‚½‚È‚ç x64)
-
-
-ŽÀÛ‚Ì—¬‚ê:
-    
-    ‚±‚ê‚ðAAviutl ‚Å“Ç‚Ýž‚ñ‚Åƒ‚ƒUƒCƒN˜R‚ê‚ðŠg’£•ÒW‚È‚Ç‚ÅÁ‚·‚Æ‚¢‚¤Žè‡‚ð‚¨‚·‚·‚ß‚µ‚Ü‚·B
-    ‚È‚º‚È‚çAAviutl ‚ÌŠg’£•ÒW‚Ì“à—e‚Í Avisynth ‚ÖƒCƒ“ƒ|[ƒg‚Å‚«‚È‚¢‚©‚ç‚Å‚·B
-    (‚Å‚«‚é‚æ‚¤‚É‚È‚Á‚Ä‚¢‚½‚ç‚·‚Ý‚Ü‚¹‚ñ)
-    ‚½‚¾A‚±‚ê‚Ìˆ—‚Í‚©‚È‚èd‚¢‚Ì‚ÅA‚Ç‚¤‚É‚àd‚­‚Ä Aviutl ã‚Åì‹Æ‚É‚È‚ñ‚Ë[‚æ‚Æ‚¢‚¤ê‡AAMV ‚â
-    UtVideo “™‚Ì‰Â‹t‚©‚»‚ê‚É‹ß‚¢ƒR[ƒfƒbƒN‚Åˆê“x’†ŠÔƒtƒ@ƒCƒ‹‚ð‘‚«‚¾‚µ‚Ä•ÒW‚·‚é‚æ‚¤‚É‚·‚ê‚ÎŠy‚É‚È‚é‚Å‚µ‚å‚¤B
-    
-    
-ŒŸo‚ÌŒÀŠE:
-    
-    Œ´¡“®‰æ‚É‚µ‚©‘Î‰ž‚µ‚Ä‚¢‚Ü‚¹‚ñB
-    ‚±‚ÌƒtƒBƒ‹ƒ^‚ðŠ|‚¯‚é‘O‚ÉAF‚â–¾‚é‚³A“Á‚É–¾‚é‚³‚ð•ÏX‚µ‚Ä‚¢‚é‚Æ‚¤‚Ü‚­‚¢‚«‚Ü‚¹‚ñB
-    ƒtƒŒ[ƒ€ŠÔ‚ð•âŠ®‚·‚é‚æ‚¤‚ÈƒtƒŒ[ƒ€ƒŒ[ƒg‚Ì•ÏX‚ðs‚Á‚Ä‚¢‚é‚Æ‰æ‘œ‚Éƒuƒ‰[‚ª‚©‚©‚Á‚Ä‚¢‚é‚½‚ßŒŸo‚Å‚«‚Ü‚¹‚ñB
-    ‚‰ð‘œ“x‚Å•W€‚æ‚è•¶Žš‚ª‘å‚«‚¢ƒ^ƒCƒv‚Ì‚«o‚µ‚É‚Í‚¨‚»‚ç‚­‘Î‰ž‚µ‚Ä‚¢‚Ü‚¹‚ñB (Ý’è‚Å‘Î‰ž‚Å‚«‚é‰Â”\«‚Í‚ ‚è‚Ü‚·)
-    ƒEƒBƒ“ƒhƒE‚â‘¼‚Ì‚«o‚µ‚Ì‰º‚É‚ ‚éA‚¤‚Á‚·‚çŒ©‚¦‚Ä‚¢‚é‚«o‚µ‚ÍŒŸo‚Å‚«‚Ü‚¹‚ñB
-    ‚»‚¤‚Å‚È‚¢‚à‚Ì‚à“®‰æ‚Ìó‘Ô‚ªˆ«‚¢‚ÆŒŸo‚Å‚«‚È‚¢‚±‚Æ‚ª‚ ‚è‚Ü‚·B
-    –œˆêA–¼‘O‚ÌÁ‚¦‚Ä‚¢‚È‚¢“®‰æ‚ðŒöŠJ‚µ‚Ä‚µ‚Ü‚¢–â‘è‚ª‹N‚«‚½‚Æ‚µ‚Ä‚àˆêØ‚ÌÓ”C‚Í•‰‚¢‚Ü‚¹‚ñB
-    •K‚¸ÅI“I‚Èƒ`ƒFƒbƒN‚ð‚·‚é‚æ‚¤‚É‚µ‚Ä‚­‚¾‚³‚¢B
-    100% ‚Ì–¼‘OÁ‚µ‚ð•ÛØ‚·‚é‚à‚Ì‚Å‚àA‚»‚Ì‚æ‚¤‚ÉÝŒv‚³‚ê‚Ä‚¢‚é‚à‚Ì‚Å‚à‚ ‚è‚Ü‚¹‚ñB
-    
-    
-‚«o‚µˆÈŠO‚ðÁ‚·‹@”\:
-
-    - ƒ}ƒXƒN‚É‚æ‚Á‚ÄAUI •”•ª (ƒ`ƒƒƒbƒgƒEƒBƒ“ƒhƒE‚Æ PT ƒƒ“ƒo[‚Ì–¼‘O) ‚ðÁ‚·‹@”\
-    - ƒ}ƒXƒN‚É‚Â‚¢‚Ä‚ÍÝ’è“à‚Ìà–¾‚ðŽQÆ
-    - –h‰q‚Å wave I—¹Œã‚Ì‡ˆÊ‚ðÁ‚·‹@”\
-    
-    
 ƒ‰ƒCƒZƒ“ƒX:
-    
+
     ‚±‚ÌƒXƒNƒŠƒvƒg‚Í Creative Commons Attribution (CC-BY) ‚Å”z•z‚³‚ê‚é‚à‚Ì‚Æ‚µ‚Ü‚·B
 
 
@@ -140,8 +59,6 @@ avs Avisynth ‚ÌƒXƒNƒŠƒvƒgƒtƒ@ƒCƒ‹‚»‚Ì‚à‚Ì
 aup aup ‚Í AviUtil ‚ÌƒvƒƒWƒFƒNƒgƒtƒ@ƒCƒ‹‚Å‚·B‚±‚ê‚ð“Ç‚Ýž‚Þê‡‚Í‰º‚ÌÝ’è‚à‡‚í‚¹‚Äs‚Á‚Ä‰º‚³‚¢
     ‚½‚¾‚µAŠg’£•ÒW‚Ì“à—e‚ÍƒCƒ“ƒ|[ƒgo—ˆ‚È‚©‚Á‚½‹C‚ª‚µ‚Ü‚·
     
-‚±‚Ì avs ƒtƒ@ƒCƒ‹‚ðƒoƒbƒ`ƒtƒ@ƒCƒ‹‚É“Š‚°‚ÄƒGƒ“ƒR[ƒh‚·‚éŽž‚È‚Ç‚Ì‚½‚ß‚É‚ÍAƒtƒ@ƒCƒ‹–¼‚ðƒtƒ‹ƒpƒX‚Å‘‚¢‚Ä‚¨‚­‚Ì‚ð„§‚µ‚Ü‚·
-
 AviUtil ‚ÌƒvƒƒWƒFƒNƒgƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚Þê‡‚Í‰º 2 s‚ÌƒRƒƒ“ƒg‚ðŠO‚µ‚Ä (s“ª‚Ì # ‚ðÁ‚µ‚Ä‰º‚³‚¢)
 aviutl_vfp ‚ðŽÀÛ‚É aviutl.vfp ‚ª‘¶Ý‚·‚éƒpƒX‚Ö“KØ‚É‘‚«Š·‚¦‚Ä‰º‚³‚¢B aviutl.vfp ‚Í AviUtil ‚Æ
 “¯‚¶ƒtƒHƒ‹ƒ_‚Ì’†‚É (‚ ‚È‚½‚ª‚»‚ê‚ðˆÚ“®‚µ‚½‚èÁ‚µ‚Ä‚¢‚È‚¯‚ê‚Î) ‚ ‚è‚Ü‚·B
@@ -195,7 +112,6 @@ ui_mask = "1280x720.png"
 ƒ`ƒƒƒbƒgƒEƒBƒ“ƒhƒEAƒp[ƒeƒB[ƒƒ“ƒo[–¼A“üŽèƒƒbƒZ[ƒW“™‚ðÁ‚·ˆÊ’u‚Ìƒ}ƒXƒN‚ðŽw’è‚µ‚Ä‰º‚³‚¢
 maskmaker ƒtƒHƒ‹ƒ_‚Ì’†‚É‚ ‚é html ‚ðŠJ‚¢‚ÄŠÈ’P‚Éì¬‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚· (ŒÃ‚¢ IE ‚Å‚Í“®‚«‚Ü‚¹‚ñ)
 ì¬‚µ‚½ƒ}ƒXƒN‚Í mask ƒtƒHƒ‹ƒ_‚É“ü‚ê‚Ä‰º‚³‚¢
-‰Šúó‘Ô‚Å‚ÍA1280 x 720 —p‚ÌƒTƒ“ƒvƒ‹‚Ì‚Ý‚ ‚è‚Ü‚·
 ƒ}ƒXƒN‚ÌƒTƒCƒY‚ª“®‰æ‚Æ‡‚Á‚Ä‚È‚¢ê‡A“K“–‚Éˆø‚«L‚Î‚µ‚½‚è“®‚©‚µ‚½‚è‚µ‚Ü‚·‚ªA‚ ‚Ü‚è–ð‚É‚½‚½‚È‚¢‚Ì‚Å‚Å‚«‚é‚¾‚¯‰ð‘œ“x‚É
 ‚ ‚Á‚½‚à‚Ì‚ð—pˆÓ‚µ‚Ä‰º‚³‚¢
 */
@@ -216,7 +132,7 @@ line_height ‚Í‚«o‚µ‚Ì–¼‘O‚Ì‚ ‚é•”•ª‚Ìã‚É‚ ‚é”’ü‚Ì‚‚³ (px) ‚Å‚·
 1 ‚É‚µ‚Ä‚àƒn[ƒtƒTƒCƒY‚Ì“®‰æ‚Ì‚«o‚µŒŸo‚Í‚Å‚«‚Ü‚¹‚ñ
 */
 
-detect_wave_result = True           # [True / False] True ‚Å wave I—¹Žž‚ÌƒŠƒUƒ‹ƒg‚Ì–¼‘OÁ‚µ‚ðs‚¢‚Ü‚·
+detect_wave_result = False          # [True / False] True ‚Å wave I—¹Žž‚ÌƒŠƒUƒ‹ƒg‚Ì–¼‘OÁ‚µ‚ðs‚¢‚Ü‚·
 wave_reward_info_pos = 430          # uƒEƒF[ƒu‚Ì•ñV‚ðŽó‚¯Žæ‚è‚Ü‚µ‚½v ‚Ì‘Ñ‚Ì’†S‚Ì“®‰æã’[‚©‚ç‚Ì‹——£ (px)
 wave_title_pos = 188                # wave I—¹Žž‚É uWAVE 1 CLEARv ‚Æƒtƒ‰ƒbƒVƒ…‚·‚é‚Ì•¶Žš‚Ì’†S‚Ì“®‰æã’[‚©‚ç‚Ì‹——£ (px)
 wave_countdown_info_pos_x = 1020    # uƒEƒF[ƒu - ŠJŽn‚Ü‚Å‚ ‚Æv ‚Æ‚ ‚é•¶Žš‚Ì¶ã‚Ì“®‰æ¶’[‚©‚ç‚Ì‹——£ (px)
@@ -225,56 +141,9 @@ wave_result_pos = 150               # ƒŠƒUƒ‹ƒg‰æ–Ê‚Ì“®‰æã’[‚©‚ç‚Ì‹——£ (px)
 wave_result_h = 280                 # ƒŠƒUƒ‹ƒg‰æ–Ê‚Ì‚‚³ (px) ‚æ‚Ù‚Ç“ÁŽê‚È‰ð‘œ“x‚Å‚È‚¯‚ê‚Î‘å·–³‚¢‚Í‚¸‚Å‚·
 
 /*
-‚±‚ÌÝ’è”’l‚ÍA1280 x 720 —p‚Ì‚à‚Ì‚È‚Ì‚ÅŠeŽ©‚ÌŠÂ‹«‚É‡‚í‚¹‚Ä“KØ‚É‘‚«Š·‚¦‚Ä‰º‚³‚¢
-
-wave I—¹ŒŸo‹@”\‚ÍAwave ‚ÌI—¹ƒ^ƒCƒ~ƒ“ƒO‚ðŒŸo‚µAƒ‰ƒ“ƒLƒ“ƒO‚ÉŽ©“®“I‚Éƒ‚ƒUƒCƒN‚ð‚©‚¯‚Ü‚·
-³í‚É“®ì‚³‚¹‚é‚½‚ß‚É‚ÍðŒ‚ª‚ ‚è‚Ü‚·B•K‚¸ˆÈ‰º‚Ì“_‚ðŠm”F‚µ‚Ä‰º‚³‚¢
-
-* "WAVE CLEAR ‚Ì•\Ž¦‚©‚ç•ñV‰æ–Ê‚ªÁ‚¦‚é‚Ü‚Å" ‚ªŒŸoƒ^ƒCƒ~ƒ“ƒO‚Å‚·B‚±‚±‚ðˆê“x‚Í”ò‚Î‚³‚¸‚ÉÄ¶‚·‚é•K—v‚ª‚ ‚è‚Ü‚·
-* ƒXƒNƒŠƒvƒg‚ðÄ¶‚µ‚Ä‚¢‚éƒAƒvƒŠƒP[ƒVƒ‡ƒ“ã‚Å‚±‚ÌŒŸoƒ^ƒCƒ~ƒ“ƒO‚ð”ò‚Ñ‰z‚·‚Æ“®ì‚µ‚Ü‚¹‚ñ
-* ÅIƒEƒF[ƒu‚ÌI—¹‚ðŒŸ’m‚·‚é‚Ì‚Í‚Ù‚©‚æ‚è‚à“ï‚µ‚¢‚Ì‚ÅŒ©—Ž‚Æ‚·‰Â”\«‚ª‚ ‚è‚Ü‚·
-
-* [d—v] Aviutl ‚ÌÄ¶ƒEƒBƒ“ƒhƒE‚Å‚ÍA•‰‰×‚ª‚©‚©‚é‚ÆƒtƒŒ[ƒ€‚ª”ò‚Î‚³‚ê‚é‚½‚ßŒŸo‚ªs‚í‚ê‚Ü‚¹‚ñ
-    ˆê“x‚Å‚à’ÊíƒEƒBƒ“ƒhƒE‚ÅƒRƒ}—Ž‚¿‚³‚¹‚¸‚ÉŒŸoƒ^ƒCƒ~ƒ“ƒO‚ð’Ê‚è‚·‚¬‚Ä‚¢‚ê‚Îƒ‚ƒUƒCƒN‚ª“à•”‚Éì¬‚³‚ê‚é‚½‚ß
-    Ä¶ƒEƒBƒ“ƒhƒE‚Å‚àƒ‰ƒ“ƒLƒ“ƒO‚Éƒ‚ƒUƒCƒN‚ª‚©‚©‚é‚æ‚¤‚É‚È‚è‚Ü‚·
-    (Ä“Ç‚Ýž‚Ý“™‚Å“à•”ó‘Ô‚ªƒNƒŠƒA‚³‚ê‚é‚ÆA‚Ü‚½ŒŸoƒ^ƒCƒ~ƒ“ƒO‚ð’Ê‚è‚·‚¬‚È‚¯‚ê‚Î‚È‚è‚Ü‚¹‚ñ)
-    “®‰æ‚ÌƒGƒ“ƒR[ƒhŽž‚Í•K‚¸ƒtƒŒ[ƒ€‡‚Éˆ—‚ªs‚í‚ê‚é‚Ì‚Å‚±‚Ì‚±‚Æ‚Í‹C‚É‚µ‚È‚­‚Ä‚à‚æ‚¢‚Å‚µ‚å‚¤
-
-* –h‰q“®‰æˆÈŠO‚Å wave I—¹ŒŸo‹@”\‚ð—LŒø‚É‚·‚é‚ÆˆÓ}‚µ‚È‚¢‚à‚Ì‚É”½‰ž‚·‚é‰Â”\«‚ª‚ ‚è‚Ü‚·
-    wave I—¹ŒŸo‹@”\‚ð—LŒø‚É‚·‚é‚ÆA” fps ‚ÌƒRƒXƒg‚ª‚©‚©‚é‚Ì‚ÅA–h‰q“®‰æ‚Å‚È‚¢‚È‚¢‚È‚ç‚Î
-    detect_wave_result ‚ð False ‚É‚·‚é‚ÆŒy‚­‚È‚è‚Ü‚·
-
-* "ƒEƒF[ƒuŠJŽn‚Ü‚Å‚ ‚Æ" ‚Éƒ`ƒƒƒbƒgƒEƒBƒ“ƒhƒE‚ª‚©‚Ô‚Á‚Ä‚¢‚ÄŠŽ‚ÂuWAVE CLEARv‚É‚«o‚µ‚ª‚©‚Ô‚Á‚Ä‚¢‚½‚è‚·‚é‚Æ‚¤‚Ü‚­ŒŸo‚Å‚«‚Ü‚¹‚ñ
-    ‰æ–ÊƒTƒCƒY‚É‚æ‚Á‚Ä‚Íƒ`ƒƒƒbƒg‚ðŠJ‚¢‚Ä‚¢‚é‚¾‚¯‚Å "ƒEƒF[ƒuŠJŽn‚Ü‚Å‚ ‚Æ" ‚É”í‚é‚æ‚¤‚Å‚·
-    ‚»‚Ìê‡‚±‚Ì‹@”\‚Íd‚­‚È‚é‚¾‚¯‚È‚Ì‚ÅØ‚Á‚Ä‰º‚³‚¢
-
-(ˆÈ‰º‚Ì}‚Í“™•ƒtƒHƒ“ƒg‚Å‚È‚¯‚ê‚Î‚¸‚ê‚Ü‚·)
-
-wave_reward_info_pos
-                     ----------
-                          ª
-                          „  ‘Ñ‚Ìã‚â‰º‚Ü‚Å‚Å‚Í‚È‚­^‚ñ’†‚Ü‚Å
-======================    « 
-   wave ‚Ì•ñV‚ðŽó‚¯Žæ‚è‚Ü‚µ‚½ ---         
-===============================
-
-wave_title_pos
-                    -----------
-                          ª
-                          „  ‘Ñ‚Ìã‚â‰º‚Ü‚Å‚Å‚Í‚È‚­^‚ñ’†‚Ü‚Å
-    ------------------    « 
-----   WAVE 1 CLEAR   -----
-    ------------------
-
-wave_countdown_info_pos_x, wave_countdown_info_pos_y
-        ---------------
-               ª                   
-               | y                 
-               «                  
-      x       +------------------
--------------> ƒEƒF[ƒu 3 ŠJŽn‚Ü‚Å‚ ‚Æ 
-              +------------------
-              | ƒ`ƒƒƒbƒgƒEƒBƒ“ƒhƒE
+Wave I—¹ŒŸo‚ÌÝ’è‚Å‚·
+ƒfƒtƒHƒ‹ƒg‚Ì”’l‚ÍA1280 x 720 —p‚Ì‚à‚Ì‚È‚Ì‚ÅŠeŽ©‚ÌŠÂ‹«‚É‡‚í‚¹‚Ä“KØ‚É‘‚«Š·‚¦‚Ä‰º‚³‚¢
+ƒ}ƒjƒ…ƒAƒ‹ https://github.com/elvl/pso2-fukidashi-mosaic/wiki/Wave-%E7%B5%82%E4%BA%86%E6%A4%9C%E5%87%BA
 */
 
 /* --------------------------------------------------------------------------------------
@@ -314,7 +183,7 @@ True ‚É‚·‚é‚ÆŒë”š‚ª­‚µ‘‚¦‚Ü‚·‚ª FPS ‚ª‘å‚«‚­ã‚ª‚èAƒtƒ‹ƒTƒCƒY‚Ì“®‰æ‚Å 30fps ‚
 ‚©‚È‚è‚³‚­‚³‚­‚É‚È‚é‚Ì‚ÅÄ¶ƒ`ƒFƒbƒNŽž‚â‚à‚Æ‚à‚ÆŒë”š‚Ì­‚È‚¢”wŒi‚ÌŽž‚É‚Í‚¨‚·‚·‚ß‚Å‚· (ŽQlƒeƒXƒgŠÂ‹«: Core i7) 
 ‚±‚ÌÝ’è‚ð—LŒø‚É‚·‚é‚ÆŽå‚ÉAŽ‡‚©‚çÔ‚ÌŒŸo‚ª‚¢‚¢‚©‚°‚ñ‚É‚È‚è‚Ü‚·
 ‚Â‚Ü‚èAŽ‡‚âÔ‚Ì­‚È‚¢”wŒi‚Å‚ ‚ê‚ÎA‚±‚ê‚ð True ‚É‚µ‚Ä use_letter_search ‚ð True ‚É‚·‚é‚Æ‚¢‚¤
-‘g‚Ý‡‚í‚¹‚ªƒRƒXƒgƒpƒtƒH[ƒ}ƒ“ƒX‚Ì‚æ‚¢Ý’è‚É‚È‚è‚Ü‚·(‚¨‚»‚ç‚­X—Ñ‚È‚Ç)
+‘g‚Ý‡‚í‚¹‚ªƒRƒXƒgƒpƒtƒH[ƒ}ƒ“ƒX‚Ì‚æ‚¢Ý’è‚É‚È‚è‚Ü‚·
 */
 
 tolerance = 0
@@ -362,8 +231,6 @@ full_scale_yuv_output ‚ª True ‚©‚Âo—Í‚ª YUV ‚Ìê‡ƒtƒ‹ƒXƒP[ƒ‹‚Ì‚Ü‚Üo—Í‚µ‚Ü‚·
 o—Í‚ª RGB ‚Ìê‡ƒXƒP[ƒ‹‚ÍŠÖŒW‚ ‚è‚Ü‚¹‚ñ (í‚Éƒtƒ‹ƒXƒP[ƒ‹)
 full_scale_yuv_input ‚ª True ‚Å output_pixel_type ‚ª auto ‚Å‚à 
 full_scale_yuv_output ‚ð True ‚É‚µ‚È‚¢‚Æ YUV ‚Å‚Ìo—ÍŽž‚Íƒtƒ‹ƒXƒP[ƒ‹‚É‚È‚è‚Ü‚¹‚ñ
-
-“ü—Í‚Æo—Í‚É‚Â‚¢‚Ä‚æ‚èÚ‚µ‚¢à–¾‚ª•K—v‚Èê‡‚ÍƒXƒNƒŠƒvƒg‚Ìˆê”Ô‰º‚É—]Œv‚Èà–¾‚ª‘‚¢‚Ä‚ ‚è‚Ü‚·
 */
 
 /* --------------------------------------------------------------------------------------
@@ -837,35 +704,4 @@ function _drawHorizontalLine(clip "yv24", int "y", string "name", string "desc",
 }
 
 __END__
-
-ˆÈ‰º­‚µž‚Ý“ü‚Á‚½˜b
-“à•”‚Å‚Íƒtƒ‹ƒXƒP[ƒ‹‚Ì YV24 ‚Åˆ—‚µ‚Ä‚¢‚Ü‚·
-‚»‚Ì‚Ü‚Üo—Í‚Å‚«‚ê‚Î—ò‰»‚à–³‚¢‚½‚ß—Ç‚¢‚Ì‚Å‚·‚ªA¢‚Ì’†‚É‚Í YV24 ‚ðŽó‚¯•t‚¯‚È‚¢‚ ‚ê‚±‚ê‚à‘½‚¢‚Å‚· (Aviutl ‚È‚Ç)
-
-Œ³‚Ì“®‰æ‚ª UtVideo “™‚Å YV12 ˆÈã‚Ì¸“x‚ðŽ‚Á‚Ä‚¢‚éê‡Ao—Í‚ð YV24 ‚É‚µ‚Äƒtƒ‹ƒXƒP[ƒ‹‚Ì YV24 ‚Å 
-x264 ‚ÅƒGƒ“ƒR[ƒh‚·‚é‚Æ‚¢‚¤‘I‘ð‚Í‘f“G‚¾‚¯‚Ç‚àAŽc”O‚È‚ª‚ç‘½‚­‚ÌÄ¶ŠÂ‹«‚ª YV24 ‚É‘Î‰ž‚µ‚Ä‚¢‚Ü‚¹‚ñ
-
-AMV ƒR[ƒfƒbƒN‚Í YV12 ‚Å‚·‚ª RGB ‚Å‚Ìo—Í—v‹‚ðŽó‚¯•t‚¯AYV12 ‚Åo—Í‚³‚¹‚Ä‚±‚Á‚¿‚ÅL’·‚·‚é‚æ‚è‚à
-RGB ‚Åo—Í‚³‚¹‚½‚Ù‚¤‚ª‰½ŒÌ‚©³Šm‚ÈF‚ª‚Å‚Ä‚«‚Ü‚· (“à•”‚ªƒtƒ‹ƒXƒP[ƒ‹H) ×‚©‚¢Ý’è‚ð‚µ‚Ä‚à‚ç‚¤‚Ì‚Í–Ê“|‚¾‚ë‚¤‚©‚ç
-AMV ‚ÌƒfƒtƒHƒ‹ƒgÝ’è‚ÅÅ‚àƒXƒP[ƒ‹‚ÌŠÔˆá‚¢‚ª‹N‚«‚É‚­‚¢ RGB ‚Å‚Ì“Ç‚Ýž‚Ý‚ð—Dæ‚µ‚Ä‚¢‚Ü‚·
-‚±‚Ì‚½‚ßA AMV ‚Å˜^‰æ‚µ‚½‚à‚Ì‚ðƒfƒtƒHƒ‹ƒg‚Ì auto ‚Åo—Í‚·‚é‚Æ‚¨‚»‚ç‚­o—Í‚ª RGB ‚É‚È‚è‚Ü‚·
-
-‚»‚¤‚·‚é‚ÆÅI“I‚Éˆê”Ê“I‚È YV12 ‚Å‚ÌƒGƒ“ƒR[ƒh‚ðs‚¤ê‡
-(AMV “à•” YV12 -> RGB) -> (‚±‚ÌƒXƒNƒŠƒvƒg“à YV24 -> RGB32) -> (VFW Aviutl etc) -> (ƒGƒ“ƒR[ƒ_[)
-‚Æ•ÏŠ·‚ðŒðŒÝ‚És‚¤Ž–‚É‚È‚Á‚Ä‚µ‚Ü‚¢‚Ü‚·
-‚±‚ê‚ª‹C‚É‚È‚éê‡A‚±‚ÌÝ’è‚ð YV12 ‚É‚µ‚Ä AMV ƒR[ƒfƒbƒN‚ÌƒXƒP[ƒ‹•â³‚Ìƒ`ƒFƒbƒN‚àŠO‚µA“ü—Í‚ð YV12 ƒtƒ‹ƒXƒP[ƒ‹‚É‚µ‚Ä‚©‚ç
-“ü—ÍƒXƒP[ƒ‹‚ÌÝ’è‚à‚µ‚Ä o—Í‚à YV12 ƒtƒ‹ƒXƒP[ƒ‹‚Ås‚¤‚Ì‚ªƒxƒXƒg‚É‚È‚è‚Ü‚·c ‚ªA‚ß‚ñ‚Ç‚­‚³‚¢‚Å‚µ‚åH
-‰´‚à‚à‚¤‚±‚ê‘‚¢‚Ä‚é‚¾‚¯‚Å‚ß‚ñ‚Ç‚­‚³‚¢‚µA‰½‚ð‚â‚Á‚Ä‚é‚©‚í‚©‚Á‚Ä‚È‚¢‚Æ–¾‚é‚­‚È‚Á‚½‚èˆÃ‚­‚È‚Á‚½‚è‚·‚é‚¾‚¯‚É‚È‚é‚µ‘Š“–S‚è‚ª‚È‚¢ŒÀ‚è
-ŠÔˆá‚¢‚Ì‚È‚¢ RGB Œo—R‚Å‚¢‚¢‚ÆŽv‚¤
-‹C‚É‚È‚él‚Íà–¾‚µ‚È‚­‚Ä‚à‚»‚Ì•Ó‚í‚©‚Á‚Ä‚él‚¾‚ë‚¤‚©‚ç (BT.701 ‚¶‚á‚È‚«‚á‚â‚¾‚Æ‚©) Ž©•ª‚ÅƒXƒNƒŠƒvƒg‘‚«Š·‚¦‚Ä‰º‚³‚¢
-
-ƒvƒƒOƒ‰ƒ~ƒ“ƒO‚Ì’mŽ¯‚ª‚ ‚élŒü‚¯ƒƒ‚
-if else ‚Ì§Œä\‘¢‚Í‚ ‚è‚Ü‚¹‚ñBŽO€‰‰ŽZŽq‚Æ Eval ‚Å“¯—l‚ÌŽ–‚ª‰Â”\‚Å‚·Bƒ‹[ƒv‚à‚ ‚è‚Ü‚¹‚ñ‚ªAÄ‹A‚Å“¯‚¶‚±‚Æ‚ª‰Â”\‚Å‚·B
-last ‚ÍÅŒã‚É•Ô‚³‚ê‚½“®‰æƒIƒuƒWƒFƒNƒg‚Å‚·B‘ã“ü‚Å‚Í last ‚ªXV‚³‚ê‚Ü‚¹‚ñB
-ƒtƒBƒ‹ƒ^ (Avisynth ‚Å‚Í“®‰æ‚ðˆµ‚¤ƒƒ\ƒbƒh‚Ì‚±‚Æ‚ðƒtƒBƒ‹ƒ^‚ÆŒ¾‚¢‚Ü‚·) ‚Ì‘æˆêˆø”‚ª–¾Ž¦‚³‚ê‚Ä‚¢‚È‚¢ê‡Alast ‚ªˆÃ–Ù‚Ì‘æˆêˆø”‚É‚È‚è‚Ü‚·B
-ƒhƒbƒg‚ðŽg‚Á‚ÄƒCƒ“ƒ{ƒJƒ“ƒg‚ª–¾Šm‚Èê‡‚Í“–‘R‚Å‚·‚ª‚»‚ê‚ª‘æˆêˆø”‚É‚È‚è‚Ü‚·B
-ˆø”‚ÌƒNƒŠƒbƒv‚ª 2 ‚ÂˆÈã‚ ‚éê‡A‰Â“Ç«‚Ì‚½‚ß‚É last ‚à–¾Ž¦‚µ‚Ä‚¢‚Ü‚·‚ª‚»‚êˆÈã‚ÌˆÓ–¡‚Í‚ ‚è‚Ü‚¹‚ñB
-•Ï”‚É‚Íƒ[ƒJƒ‹ƒXƒR[ƒv‚ÆƒOƒ[ƒoƒ‹ƒXƒR[ƒv‚ª‚ ‚è‚Ü‚·Bƒ‰ƒ“ƒ^ƒCƒ€ƒƒ\ƒbƒh‚Ì’†‚Ìƒ[ƒJƒ‹•Ï”‚ÍƒgƒbƒvƒŒƒxƒ‹‚Ì‘f‚Ìƒ[ƒJƒ‹•Ï”‚Æ“¯‚¶ˆµ‚¢‚É‚È‚è‚Ü‚·(‘½•ª)
-•Ï”‚Í‘ã“ü‚µ‚½Žž“_‚ÅŒ^‚ªŒˆ‚Ü‚è‚Ü‚·B
-ˆ—‚Í‘S‚Ä‚Ì\•¶‰ðÍ‚ªI‚í‚Á‚½‚ ‚Æ‚ÅA––’[‚©‚çƒcƒŠ[‚ð‘k‚Á‚ÄÅ’Z‚ÌŒo˜H‚É‚È‚é‚æ‚¤‚És‚í‚ê‚Ü‚·
 
