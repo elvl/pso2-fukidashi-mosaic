@@ -129,7 +129,7 @@ False : なにもしないでいつもどおり (デフォルト)
 読み込む動画
 =============== */
 
-movie = "D:\rec\test.avi"
+movie = "D:\rec\20131228_01.mp4"
 
 /*
 読み込める形式:
@@ -285,13 +285,15 @@ unit_size = 8                       # [2 - ] モザイクのコマの大きさ (px) or ボケ
 精度
 =============== */
 
-tolerance = 0
+use_letter_search = True
 
 /*
-[-4 - 24]
-大きくすると色々な検出がいい加減になりますが、そのぶん誤爆が増えるのでできるだけ 0 推奨
-生動画なのに 0 でまともに検出出来ない場合、明るさのスケール (後述) が合っていない可能性が高いです
-[目安] 生動画 0 : 高画質な H264 0 から 6 : エンコしてつべにうpして再エンコされたやつ 10 以上 (つらい)
+[True / False] 
+True  : 文字検出を行う (デフォルト)
+False : 文字検出を行わない
+
+True にすると FPS が 2 程度下がりますが、明るいエフェクトが発生した時に背景に頻発する誤爆を大きく減らします
+検出を厳密にするため、状態が悪い動画だとモザイク漏れが増える可能性があります
 */
 
 use_fast_color_search = False
@@ -303,7 +305,18 @@ False : 色検出を普通に行う (デフォルト)
 
 True にすると誤爆が少し増えますが FPS が大きく上がり、フルサイズの動画で 30fps で再生が可能になります
 かなりさくさくになるので再生チェック時やもともと誤爆の少ない背景の時にはおすすめです (参考テスト環境: Core i7) 
-...これが False でも浮遊とか海とか背景ですげえ誤爆しそうなんだけどテストしてないんですよ怖いな
+この設定を有効にすると主に、紫から赤の検出がいいかげんになります
+つまり、紫や赤の少ない背景であれば、これを True にして use_letter_search を True にするという
+組み合わせがコストパフォーマンスのよい設定になります(おそらく森林など)
+*/
+
+tolerance = 0
+
+/*
+[-4 - 24]
+大きくすると色々な検出がいい加減になりますが、そのぶん誤爆が増えるのでできるだけ 0 推奨
+生動画なのに 0 でまともに検出出来ない場合、明るさのスケール (後述) が合っていない可能性が高いです
+[目安] 生動画 0 : 高画質な H264 0 から 6 : エンコしてつべにうpして再エンコされたやつ 10 以上 (つらい)
 */
 
 /* --------------------------------------------------------------------------------------
@@ -416,7 +429,7 @@ wave_flush_status = """
 """ + wave_flush_status) : NOP
 
 header = Apply(use_fast_color_search ? "nameHeaderMaskYVFast" : "nameHeaderMaskYV", yv24ri, y8r, luma_threshold, tolerance)
-findNameHeader(y8r, header, frame, tolerance, line_height)
+findNameHeader(y8r, yv24, header, frame, tolerance, line_height, use_letter_search)
 Levels(0, mosaic_strength_2, Max(0, 255 - mosaic_strength_1), 0, 255, coring=false)
 mt_logic(last, last.BlankClip(color=$FFFFFF).Letterbox(5, ui_height, 5, 5).mt_binarize(127), mode="and")
 
@@ -601,7 +614,7 @@ function resizeUiMask(clip "clip", clip "ui_mask", string "mode")
     return last
 }
 
-function findNameHeader(clip "y8", clip "header", clip "frame", int "tolerance", int "line_height")
+function findNameHeader(clip "y8", clip "yv24", clip "header", clip "frame", int "tolerance", int "line_height", bool "strict")
 {    
     smoothBlur(header, threshold=Max(30, 80 - tolerance), w_ratio=8, h_ratio=1)
     Blur(1.0, 0.0).mt_binarize(170).Blur(0.0, 1.0).mt_binarize(170).mt_expand(mode="horizontal")
@@ -644,7 +657,18 @@ function findNameHeader(clip "y8", clip "header", clip "frame", int "tolerance",
     mt_binarize(0)
     bottom_line = shiftVertical(line_height * -6, align=True)
     
-    mt_logic(upper_line, bottom_line, mode="or")
+    line = mt_logic(upper_line, bottom_line, mode="or")
+    
+    strict ? Eval("""
+        mt_logic( \
+            mt_logic(yv24.ConvertToY8.mt_binarize(Max(190, 215 - tolerance)), \
+            yv24.UtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and"), \
+            yv24.VtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and")
+        
+        BilinearResize(int(width / 20.0) * 2, int(height / 10.0) * 2).BilinearResize(y8.width, y8.height).mt_binarize(0)
+        mt_logic(last, line, mode="and")
+    """) : line
+    
     mt_logic(last, smoothBlur(header, threshold=190, w_ratio=8, h_ratio=8).Invert, mode="and")
     mt_logic(last, last.shiftHorizontal(-line_height * 2 - 1), mode="or")
     mt_expand(mode="horizontal")
