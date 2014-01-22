@@ -122,14 +122,13 @@ True  : 座標関係の設定を画面に表示します
 False : なにもしないでいつもどおり (デフォルト)
 
 この機能を有効にすると、検出関係の座標の設定を画面に表示します。有効な位置になっているか画面上で確認することができます
-この機能は大変重いので確認するときのみ True にし、必要ない時は False にするようにしてください
 */
 
 /* --------------------------------------------------------------------------------------
 読み込む動画
 =============== */
 
-movie = "D:\rec\20131228_01.mp4"
+movie = "D:\rec\test.avi"
 
 /*
 読み込める形式:
@@ -791,21 +790,23 @@ function nameFrameMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tole
 
 function dispSettings(clip "yv24", int "rp", int "tp", int "cx", int "cy", int "uh", int "lh")
 {
-    yv24 = yv24.Levels(0, 1.0, 255, 0, 128, coring=false)
-    
-    yv24
+    yv24.BlankClip(color=$000000, length=1).KillAudio
     _drawHorizontalLine(last, rp, "wave_reward_info_pos", "「ウェーブの報酬を受け取りました」 の帯の中心")
     _drawHorizontalLine(last, uh, "ui_height", "これより下側はふきだしの検出に含めません (パレット等の誤爆防止)", upper=True)
     _drawHorizontalLine(last, tp, "wave_title_pos", "wave 終了時に 「WAVE 1 CLEAR」 とフラッシュする文字の中心")
     
-    mt_logic(last, yv24.BlankClip(color=$FFFFFF).Letterbox(cy, height - cy - lh, cx, width - cx - 16 * 6 * 2, color=$000000) \
-        .ColorYUV(levels="TV->PC"), mode="or", y=3, u=2, v=2)
+    mt_logic(last, yv24.BlankClip(color=$FFFFFF, length=1).KillAudio.Letterbox(cy, height - cy - lh, cx, width - cx - 16 * 6 * 2, color=$000000), \
+        mode="or", y=3, u=2, v=2)
     
     Subtitle("↑ ウェーブ終了/開始まであと ↑\n" + \
         "wave_countdown_info_pos_x: " + String(cx) + \
         "\nwave_countdown_info_pos_y: " + String(cy), \
-        y=cy + lh + 5, x=width - 10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$000000, align=9)
+        y=cy + lh + 5, x=width - 10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$101010, align=9)
         
+    sub = ColorYUV(levels="TV->PC")
+    m = sub.ConvertToY8.mt_binarize(0).ColorYUV(off_y=180)
+    mt_merge(yv24, sub, YtoUV(m, m, m), y=3, u=3, v=3)
+    
     return last
 }
 
@@ -816,9 +817,10 @@ function _drawHorizontalLine(clip "yv24", int "y", string "name", string "desc",
     desc = Default(desc, "")
     y2 = upper ? height - y : y
 
-    yv24.BlankClip(color=$FFFFFF).Letterbox(y2 - 1, height - y2 - 1, 0, 0, color=$000000).ColorYUV(levels="TV->PC")
+    yv24.BlankClip(color=$FFFFFF, length=1).KillAudio.Letterbox(y2 - 1, height - y2 - 1, 0, 0, color=$000000)
     mt_logic(yv24, last, mode="or", y=3, u=2, v=2)
-    Subtitle("↑ " + name + ": " + String(y) + " ↑\n" + desc, y=y2 + 5, x=10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$000000)
+    Subtitle("↑ " + name + ": " + String(y) + " ↑\n" + desc, y=y2 + 5, x=10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$101010)
+    
     return last
 }
 
