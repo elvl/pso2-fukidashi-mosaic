@@ -299,6 +299,7 @@ True  : 文字検出を行う (デフォルト)
 False : 文字検出を行わない
 
 True にすると FPS が 2 程度下がりますが、明るいエフェクトが発生した時に背景に頻発する誤爆を大きく減らします
+副次的な効果として画面中央あたりのアイテム取得ログへのモザイクがまろやかになります
 検出を厳密にするため、状態が悪い動画だとモザイク漏れが増える可能性があります
 */
 
@@ -434,8 +435,9 @@ wave_flush_status = """
         .MaskHS(minSat=30, maxSat=100, startHue=Max(0, 290 - tolerance), endHue=Min(360, 305 + tolerance), coring=false)
 """ + wave_flush_status) : NOP
 
+letter = use_letter_search ? letterMask(yv24, tolerance) : y8r # dummy
 header = Apply(use_fast_color_search ? "nameHeaderMaskYVFast" : "nameHeaderMaskYV", yv24ri, y8r, luma_threshold, tolerance)
-findNameHeader(y8r, yv24, header, frame, tolerance, line_height, use_letter_search)
+findNameHeader(y8r, letter, header, frame, tolerance, line_height, use_letter_search)
 Levels(0, mosaic_strength_2, Max(0, 255 - mosaic_strength_1), 0, 255, coring=false)
 mt_logic(last, last.BlankClip(color=$FFFFFF).Letterbox(5, ui_height, 5, 5).mt_binarize(127), mode="and")
 
@@ -446,6 +448,7 @@ resizeUiMask(source, last, mode="auto").modulo(32).PointResize(yv24r.width, yv24
 ui_mask = Loop(yv24r.framecount, 0, 0) # 読み込み時にフレームを増設すると非常に遅くなるので Loop で水増しする
 
 y8r.mt_edge
+use_letter_search ? mt_logic(last, letter.Letterbox(0, 0, 0, width / 2 - 24, color=$FFFFFF).mt_binarize(127), mode="and") : NOP
 BilinearResize(int(width / 10.0) * 2, int(height / 10.0) * 2)
 Apply(resizer, last, y8r.width, y8r.height)
 Levels(0, 1.0, 40, 0, 255, coring=false)
@@ -620,7 +623,7 @@ function resizeUiMask(clip "clip", clip "ui_mask", string "mode")
     return last
 }
 
-function findNameHeader(clip "y8", clip "yv24", clip "header", clip "frame", int "tolerance", int "line_height", bool "strict")
+function findNameHeader(clip "y8", clip "letter", clip "header", clip "frame", int "tolerance", int "line_height", bool "strict")
 {    
     smoothBlur(header, threshold=Max(30, 80 - tolerance), w_ratio=8, h_ratio=1)
     Blur(1.0, 0.0).mt_binarize(170).Blur(0.0, 1.0).mt_binarize(170).mt_expand(mode="horizontal")
@@ -663,18 +666,8 @@ function findNameHeader(clip "y8", clip "yv24", clip "header", clip "frame", int
     mt_binarize(0)
     bottom_line = shiftVertical(line_height * -6, align=True)
     
-    line = mt_logic(upper_line, bottom_line, mode="or")
-    
-    strict ? Eval("""
-        mt_logic( \
-            mt_logic(yv24.ConvertToY8.mt_binarize(Max(190, 215 - tolerance)), \
-            yv24.UtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and"), \
-            yv24.VtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and")
-        
-        BilinearResize(int(width / 20.0) * 2, int(height / 10.0) * 2).BilinearResize(y8.width, y8.height).mt_binarize(0)
-        mt_logic(last, line, mode="and")
-    """) : line
-    
+    mt_logic(upper_line, bottom_line, mode="or")
+    strict ? mt_logic(letter, last, mode="and") : NOP
     mt_logic(last, smoothBlur(header, threshold=190, w_ratio=8, h_ratio=8).Invert, mode="and")
     mt_logic(last, last.shiftHorizontal(-line_height * 2 - 1), mode="or")
     mt_expand(mode="horizontal")
@@ -793,6 +786,18 @@ function nameFrameMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tole
    
     cleanMask(last)
     return last
+}
+
+function letterMask(clip "yv24", int "tolerance")
+{
+        yv24
+        mt_logic( \
+            mt_logic(ConvertToY8.mt_binarize(Max(190, 215 - tolerance)), \
+            UtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and"), \
+            VtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and")
+        
+        BilinearResize(int(width / 20.0) * 2, int(height / 10.0) * 2).BilinearResize(width / 2, height).mt_binarize(0)
+        return last
 }
 
 function dispSettings(clip "yv24", int "rp", int "tp", int "cx", int "cy", int "uh", int "lh")
