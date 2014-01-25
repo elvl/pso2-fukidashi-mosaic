@@ -602,7 +602,7 @@ function nameHeaderMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tol
     
     # pure red : 95 - 110
     pr = selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 55 - tol), max_luma=Min(lt, 80 + tol + wt * 8), \
+        min_luma=Max(0, 55 - tol + wt * 3), max_luma=Min(lt, 80 + tol + wt * 8), \
         min_sat=Max(0, 50 - tol), max_sat=Min(150, 75 + tol), \
         start_hue=100, end_hue=130) \
         .mt_logic(last, mode="or")
@@ -628,8 +628,8 @@ function nameHeaderMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tol
     
     # purple 320 - 65
     bp = selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 55 - tol), max_luma=Min(lt, 80 + tol + wt * 3), \
-        min_sat=Max(0, 35 - tol), max_sat=Min(150, 65 + tol), \ 
+        min_luma=Max(0, 55 - tol + wt * 2), max_luma=Min(lt, 80 + tol + wt * 3), \
+        min_sat=Max(0, 35 - tol - wt), max_sat=Min(150, 65 + tol), \ 
         start_hue=320, end_hue=65) \
         .mt_logic(last, mode="or")
     
