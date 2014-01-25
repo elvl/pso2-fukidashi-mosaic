@@ -74,7 +74,7 @@ prefer_pixel_type = "RGB32"
 
 /*
 avi の読み込みでは最初に RGB32 を試して、読み込めていなければ指定なしで試行します
-これは RGB のほうが何故か正しい色を出力する傾向がある AMV3 を考慮した挙動です
+アマレココで録画した動画を間違いなく扱うには RGB32 にしておいて下さい！
 この挙動を変えたい場合 prefer_pixel_type を YV12 などに書き換えて下さい
 */
 
@@ -156,6 +156,18 @@ unit_size = 8                       # [2 - ] モザイクのコマの大きさ (px) or ボケ
 /* --------------------------------------------------------------------------------------
 精度
 =============== */
+
+wrong_BT709 = False
+
+/*
+[True / False] 
+True  : 何もしない (デフォルト)
+False : 誤った色でエンコードしたとみなして甘く検出する
+
+アマレココの動画をエンコードした mp4 などを読み込んで、モザイクがかからない吹出しがある場合
+これを True にすると多分うまくいきます
+(AMV3 を Aviutl で BT.709 として読み込んでエンコードしてしまった時のズレを考慮します)
+*/
 
 use_letter_search = True
 
@@ -258,9 +270,8 @@ source = loadMedia(movie, prefer_pixel_type, Float(fps)).Crop(crop_left, crop_to
 source.AssumeFrameBased.modulo(32)
 force_fps ? ChangeFPS(truncated_fps) : NOP
 
-yv24 = isRGB ? ConvertToYV24(matrix="PC.601") : \
+yv24 = isRGB ? ConvertToYV24(matrix="PC.709") : \
     full_scale_yuv_input ? ConvertToYV24 : ConvertToYV24.ColorYUV(levels="TV->PC")
-
 yv24r = yv24.PointResize(yv24.width / 2, yv24.height).KillAudio
 y8r = yv24r.ConvertToY8
 y8ri = y8r.mt_inpand(mode="horizontal")
@@ -309,18 +320,18 @@ wave_flush_status = """
     wave_title_flash = y8r.Crop(0, wave_title_pos - letter_height / 2, 16 * 10, letter_height)
     wave_reward_info = yv24r.Crop(0, wave_reward_info_pos - letter_height / 2, 0, letter_height)
     wave_countdown_info = yv24r.Crop(wave_countdown_info_pos_x, wave_countdown_info_pos_y, 16 * 6, letter_height) \
-        .MaskHS(minSat=30, maxSat=100, startHue=Max(0, 290 - tolerance), endHue=Min(360, 305 + tolerance), coring=false)
+        .MaskHS(minSat=30, maxSat=120, startHue=Max(0, 285 - tolerance), endHue=Min(360, 310 + tolerance), coring=false)
 """ + wave_flush_status) : NOP
 
 letter = use_letter_search ? letterMask(yv24, tolerance) : y8r # dummy
-header = Apply(use_fast_color_search ? "nameHeaderMaskYVFast" : "nameHeaderMaskYV", yv24ri, y8r, luma_threshold, tolerance)
+header = Apply(use_fast_color_search ? "nameHeaderMaskYVFast" : "nameHeaderMaskYV", yv24ri, y8r, luma_threshold, tolerance, wrong_BT709)
 findNameHeader(y8r, letter, header, frame, tolerance, line_height, use_letter_search)
 Levels(0, mosaic_strength_2, Max(0, 255 - mosaic_strength_1), 0, 255, coring=false)
 mt_logic(last, last.BlankClip(color=$FFFFFF).Letterbox(5, ui_height, 5, 5).mt_binarize(127), mode="and")
 
 mosaic_mask = (detect_wave_result && safe_geo_settings) ? findWaveEnd(y8r, last, wave_result_pos, wave_result_h, test) : last
 
-ImageSource(ScriptDir + "\mask\" + ui_mask, use_DevIL=true, start=0, end=1, pixel_type="RGB32").ConvertToY8(matrix="PC.601").KillAudio
+ImageSource(ScriptDir + "\mask\" + ui_mask, use_DevIL=true, start=0, end=1, pixel_type="RGB32").ConvertToY8(matrix="PC.709").KillAudio
 resizeUiMask(source, last, mode="auto").modulo(32).PointResize(yv24r.width, yv24r.height)
 ui_mask = Loop(yv24r.framecount, 0, 0) # 読み込み時にフレームを増設すると非常に遅くなるので Loop で水増しする
 
@@ -352,7 +363,7 @@ pixel_type = (output_pixel_type == "auto") ? source.pixelType : output_pixel_typ
 pixel_type = pixel_type.UCase
 is_rgb = (FindStr(pixel_type, "RGB") > 0) ? True : False
 out_is_fullscale = (is_rgb || full_scale_yuv_output) ? True : False
-matrix = out_is_fullscale ? "PC.601" : "Rec601"
+matrix = out_is_fullscale ? "PC.709" : "Rec709"
 
 out_is_fullscale ? NOP : ColorYUV(levels="PC->TV")
 (source.isYUY2 && pixel_type == "YUY2") ? ConvertBackToYUY2 : Eval("ConvertTo" + pixel_type + """(last, matrix="""" + matrix + """")""")
@@ -501,7 +512,7 @@ function resizeUiMask(clip "clip", clip "ui_mask", string "mode")
 }
 
 function findNameHeader(clip "y8", clip "letter", clip "header", clip "frame", int "tolerance", int "line_height", bool "strict")
-{    
+{
     smoothBlur(header, threshold=Max(30, 80 - tolerance), w_ratio=8, h_ratio=1)
     Blur(1.0, 0.0).mt_binarize(170).Blur(0.0, 1.0).mt_binarize(170).mt_expand(mode="horizontal")
     
@@ -545,7 +556,7 @@ function findNameHeader(clip "y8", clip "letter", clip "header", clip "frame", i
     
     mt_logic(upper_line, bottom_line, mode="or")
     strict ? mt_logic(letter, last, mode="and") : NOP
-    mt_logic(last, smoothBlur(header, threshold=190, w_ratio=8, h_ratio=8).Invert, mode="and")
+    mt_logic(last, smoothBlur(header, threshold=190, w_ratio=8, h_ratio=12).Invert, mode="and")
     mt_logic(last, last.shiftHorizontal(-line_height * 2 - 1), mode="or")
     mt_expand(mode="horizontal")
     BilinearResize(int(width / 8.0) * 2, int(height / 10.0) * 2).BilinearResize(width, height)
@@ -577,47 +588,48 @@ function selectYUVRange(clip "yv24", clip "y8", int "min_luma", int "max_luma", 
         mode="and")
 }
 
-function nameHeaderMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tolerance")
+function nameHeaderMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tolerance", bool "wrong_BT709")
 {
-    tol = tolerance
+    wt = wrong_BT709 ? 4 : 0
+    tol = tolerance + 2
     lt = luma_threshold - tol
     
     # pink - dull red : 65 - 130
     selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 80 - tol), max_luma=Min(lt, 120 + tol), \
-        min_sat=Max(0, 25 - tol), max_sat=Min(150, 60 + tol), \
+        min_luma=Max(0, 70 - tol), max_luma=Min(lt, 110 + tol + wt), \
+        min_sat=Max(0, 35 - tol - wt * 2), max_sat=Min(150, 60 + tol), \
         start_hue=65, end_hue=130)
     
     # pure red : 95 - 110
     pr = selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 70 - tol), max_luma=Min(lt, 110 + tol), \
-        min_sat=Max(0, 55 - tol), max_sat=Min(150, 80 + tol), \
+        min_luma=Max(0, 55 - tol), max_luma=Min(lt, 80 + tol + wt * 8), \
+        min_sat=Max(0, 50 - tol), max_sat=Min(150, 75 + tol), \
         start_hue=100, end_hue=130) \
         .mt_logic(last, mode="or")
     
     # orange - yellow - yellow green : 130 - 185
     selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 100 - tol), max_luma=Min(lt, 150 + tol), \
-        min_sat=Max(0, 40 - tol), max_sat=Min(150, 80 + tol), \ 
+        min_luma=Max(0, 100 - tol), max_luma=Min(lt, 145 + tol + wt), \
+        min_sat=Max(0, 40 - tol - wt), max_sat=Min(150, 75 + tol), \ 
         start_hue=140, end_hue=185)
     
     # green : 185 - 265
     yg = selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 50 - tol), max_luma=Min(lt, 120 + tol), \
-        min_sat=Max(0, 20 - tol), max_sat=Min(150, 55 + tol), \ 
+        min_luma=Max(0, 80 - tol - wt * 3), max_luma=Min(lt, 120 + tol), \
+        min_sat=Max(0, 30 - tol), max_sat=Min(150, 60 + tol), \ 
         start_hue=185, end_hue=265) \
         .mt_logic(last, mode="or")
     
     # teal - blue : 265 - 330
     selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 50 - tol), max_luma=Min(lt, 115 + tol), \
+        min_luma=Max(0, 55 - tol), max_luma=Min(lt, 120 + tol), \
         min_sat=Max(0, 25 - tol), max_sat=Min(150, 65 + tol), \ 
         start_hue=265, end_hue=330)
     
     # purple 320 - 65
     bp = selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 65 - tol), max_luma=Min(lt, 100 + tol), \
-        min_sat=Max(0, 30 - tol), max_sat=Min(150, 65 + tol), \ 
+        min_luma=Max(0, 55 - tol), max_luma=Min(lt, 80 + tol + wt * 3), \
+        min_sat=Max(0, 35 - tol), max_sat=Min(150, 65 + tol), \ 
         start_hue=320, end_hue=65) \
         .mt_logic(last, mode="or")
     
@@ -626,28 +638,29 @@ function nameHeaderMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tol
     return last
 }
 
-function nameHeaderMaskYVFast(clip "yv24", clip "y8", int "luma_threshold", int "tolerance")
+function nameHeaderMaskYVFast(clip "yv24", clip "y8", int "luma_threshold", int "tolerance", bool "wrong_BT709")
 {
-    tol = tolerance
+    wt = wrong_BT709 ? 4 : 0
+    tol = tolerance + 2
     lt = luma_threshold - tol
     
     # all
     selectYUVRange(yv24, y8, \
         min_luma=Max(0, 50 - tol), max_luma=Min(lt, 120 + tol), \
-        min_sat=Max(0, 20 - tol), max_sat=Min(150, 65 + tol), \
+        min_sat=Max(0, 25 - tol), max_sat=Min(150, 75 + tol), \
         start_hue=0, end_hue=360)
     
     # pure red : 95 - 110
     selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 70 - tol), max_luma=Min(lt, 110 + tol), \
-        min_sat=Max(0, 55 - tol), max_sat=Min(150, 80 + tol), \
+        min_luma=Max(0, 55 - tol), max_luma=Min(lt, 80 + tol + wt * 8), \
+        min_sat=Max(0, 50 - tol), max_sat=Min(150, 75 + tol), \
         start_hue=100, end_hue=130) \
         .mt_logic(last, mode="or")
     
     # orange - yellow - yellow green : 130 - 185
     selectYUVRange(yv24, y8, \
-        min_luma=Max(0, 100 - tol), max_luma=Min(lt, 150 + tol), \
-        min_sat=Max(0, 40 - tol), max_sat=Min(150, 80 + tol), \ 
+        min_luma=Max(0, 100 - tol), max_luma=Min(lt, 145 + tol + wt), \
+        min_sat=Max(0, 40 - tol - wt), max_sat=Min(150, 75 + tol), \ 
         start_hue=140, end_hue=185) \
         .mt_logic(last, mode="or")
         
