@@ -100,6 +100,18 @@ crop_right = 0          # 右
 UI 関係
 =============== */
 
+force_ui_mosaic = False
+
+/*
+[True / False] 
+True  : コントラストが無いところでも、マスク画像で白い所は強制的に常にモザイクをかける
+False : マスク画像の白い所の中でもコントラストのあるところにしかモザイクをかけない (デフォルト)
+
+デフォルト動作では出来る限り余計なモザイクをかけません。これにより、チャットウィンドウに
+他のウィンドウがかぶっているときにモザイクがかからないことが問題になるのならば
+force_ui_mosaic を True にすることでコントラストにかかわらず強制的にモザイクをかけます
+*/
+
 ui_height = 100
 
 /*
@@ -335,12 +347,15 @@ ImageSource(ScriptDir + "\mask\" + ui_mask, use_DevIL=true, start=0, end=1, pixe
 resizeUiMask(source, last, mode="auto").modulo(32).PointResize(yv24r.width, yv24r.height)
 ui_mask = Loop(yv24r.framecount, 0, 0) # 読み込み時にフレームを増設すると非常に遅くなるので Loop で水増しする
 
-y8r.mt_edge
-use_letter_search ? mt_logic(last, letter.Letterbox(0, 0, 0, width / 2 - 24, color=$FFFFFF).mt_binarize(127), mode="and") : NOP
-BilinearResize(int(width / 10.0) * 2, int(height / 10.0) * 2)
-Apply(resizer, last, y8r.width, y8r.height)
-Levels(0, 1.0, 40, 0, 255, coring=false)
-mt_logic(last, ui_mask, mode="min")
+force_ui_mosaic ? ui_mask : Eval("""
+    y8r.mt_edge
+    use_letter_search ? mt_logic(last, letter.Letterbox(0, 0, int(width / 3), width / 2 - 24, color=$FFFFFF).mt_binarize(127), mode="and") : NOP
+    BilinearResize(int(width / 10.0) * 2, int(height / 10.0) * 2)
+    Apply(resizer, last, y8r.width, y8r.height)
+    Levels(0, 1.0, 40, 0, 255, coring=false)
+    mt_logic(last, ui_mask, mode="min")
+""")
+
 mt_logic(last, mosaic_mask, mode="max")
 
 mask_r = last
