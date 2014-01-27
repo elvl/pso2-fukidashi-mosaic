@@ -144,15 +144,17 @@ False : なにもしないでいつもどおり (デフォルト)
 
 detect_wave_result = False          # [True / False] True で wave 終了時のリザルトの名前消しを行います
 wave_reward_info_pos = 430          # 「ウェーブの報酬を受け取りました」 の帯の中心の動画上端からの距離 (px)
-wave_title_pos = 188                # wave 終了時に 「WAVE 1 CLEAR」 とフラッシュするの文字の中心の動画上端からの距離 (px)
-wave_countdown_info_pos_x = 1020    # 「ウェーブ - 開始まであと」 とある文字の左上の動画左端からの距離 (px)
-wave_countdown_info_pos_y = 295     # 「ウェーブ - 開始まであと」 とある文字の左上の動画上端からの距離 (px)
+wave_countdown_info_pos_x = 260     # 「ウェーブ - 開始まであと」 とある文字の左上の動画右端からの距離 (px)
+wave_countdown_info_pos_y = 296     # 「ウェーブ - 開始まであと」 とある文字の左上の動画上端からの距離 (px)
 wave_result_pos = 150               # リザルト画面の動画上端からの距離 (px)
 wave_result_h = 280                 # リザルト画面の高さ (px) よほど特殊な解像度でなければ大差無いはずです
 
 /*
-デフォルトの数値は、1280 x 720 用のものなので環境に合わせて適切に書き換えて下さい
 マニュアル https://github.com/elvl/pso2-fukidashi-mosaic/wiki/Wave-%E7%B5%82%E4%BA%86%E6%A4%9C%E5%87%BA
+
+wave_reward_info_pos のデフォルトは、1280 x 720 用のものなので環境に合わせて適切に書き換えて下さい
+wave_countdown_info_pos_x と wave_countdown_info_pos_y はよほど特殊な解像度でないかぎりこのままで良いはずです
+wave_result_pos と wave_result_h も解像度で大差無いはずですが、リザルトのモザイクがずれる場合は調整して下さい
 */
 
 /* --------------------------------------------------------------------------------------
@@ -284,6 +286,7 @@ force_fps ? ChangeFPS(truncated_fps) : NOP
 
 yv24 = isRGB ? ConvertToYV24(matrix="PC.709") : \
     full_scale_yuv_input ? ConvertToYV24 : ConvertToYV24.ColorYUV(levels="TV->PC")
+y8 = yv24.ConvertToY8
 yv24r = yv24.PointResize(yv24.width / 2, yv24.height).KillAudio
 y8r = yv24r.ConvertToY8
 y8ri = y8r.mt_inpand(mode="horizontal")
@@ -297,19 +300,21 @@ wave_flush_status = """
     wave_reward_display_count = 0
     wave_detection_thresh = 0
     wave_suspend_count = 0
-    wave_fragment_count = 0"""
+    wave_fragment_count = 0
+    wave_countdown_stop = 0"""
     
 (detect_wave_result || disp_settings) ? Eval("""
     letter_height = 20
     crop_height_limit = yv24r.height - letter_height * 2
-    wave_countdown_info_pos_x_o = wave_countdown_info_pos_x
+    wave_count_down_width = 16 * 12
+    wave_ui_x = source.width - wave_countdown_info_pos_x
     
     error_msg = (wave_reward_info_pos < crop_height_limit) ? error_msg : error_msg + "wave_reward_info_pos が大きすぎます。\n"
-    error_msg = (wave_title_pos < crop_height_limit) ? error_msg : error_msg + "wave_title_pos が大きすぎます。\n"
     error_msg = (wave_countdown_info_pos_y < crop_height_limit) ? error_msg : error_msg + "wave_countdown_info_pos_y が大きすぎます。\n"
     error_msg = (wave_result_h + wave_result_pos < crop_height_limit) ? error_msg : error_msg + "wave_result_h か wave_result_pos が大きすぎます。\n"
-    error_msg = (wave_countdown_info_pos_x + 16 * 6 * 2 < source.width) ? error_msg : error_msg + "wave_countdown_info_pos_x が大きすぎます。\n"
-    
+    error_msg = (wave_countdown_info_pos_x > wave_count_down_width) ? error_msg : error_msg + "wave_countdown_info_pos_x が小さすぎます。\n特殊な解像度の場合お手数ですがスクリーンショットを添えて @6elz までご連絡下さい\n"
+    error_msg = (wave_countdown_info_pos_x < source.width) ? error_msg : error_msg + "wave_countdown_info_pos_x が大きすぎます。\n"
+
     safe_geo_settings = error_msg.StrLen == 0
     error_msg = !safe_geo_settings ? error_msg + "\n無効な設定が検出されました。座標を動画の有効な範囲内におさめて下さい。\n" : error_msg
     error_msg = (detect_wave_result && !safe_geo_settings) ? error_msg + "wave 終了検出は無効にされました。\n" : error_msg
@@ -318,10 +323,9 @@ wave_flush_status = """
 
 (detect_wave_result && safe_geo_settings) ? Eval("""
     framerate_ratio = 30.0 / yv24r.framerate
-    wave_countdown_info_pos_x = int(wave_countdown_info_pos_x / 2)
-    wave_tol = tolerance + 8
+    wave_tol = tolerance + 16
     wave_reward_info_height = 50
-    wave_fragment_limit = 100.0
+    wave_fragment_limit = 60.0
     wave_suspend_limit = 300.0
     wave_current_frame_prev = 0
 
@@ -329,13 +333,13 @@ wave_flush_status = """
         .FadeIn0(10).FadeOut0(30).KillAudio.ChangeFPS(yv24r.framerate)
     wave_mask_full_length = wave_mask_prototype.BlankClip(length=yv24r.framecount).KillAudio.mt_binarize(127)
    
-    wave_title_flash = y8r.Crop(0, wave_title_pos - letter_height / 2, 16 * 10, letter_height)
     wave_reward_info = yv24r.Crop(0, wave_reward_info_pos - letter_height / 2, 0, letter_height)
-    wave_countdown_info = yv24r.Crop(wave_countdown_info_pos_x, wave_countdown_info_pos_y, 16 * 6, letter_height) \
+    wave_countdown_info = yv24r.Crop(int(wave_ui_x / 2), wave_countdown_info_pos_y, wave_count_down_width / 2, letter_height) \
         .MaskHS(minSat=30, maxSat=120, startHue=Max(0, 285 - tolerance), endHue=Min(360, 310 + tolerance), coring=false)
+    wave_countdown_time = y8.Crop(wave_ui_x + 148, wave_countdown_info_pos_y + letter_height + 2, 16, int(letter_height / 2)).mt_binarize(115)
 """ + wave_flush_status) : NOP
 
-letter = use_letter_search ? letterMask(yv24, tolerance) : y8r # dummy
+letter = use_letter_search ? letterMask(yv24, y8, tolerance) : y8r # dummy
 header = Apply(use_fast_color_search ? "nameHeaderMaskYVFast" : "nameHeaderMaskYV", yv24ri, y8r, luma_threshold, tolerance, wrong_BT709)
 findNameHeader(y8r, letter, header, frame, tolerance, line_height, use_letter_search)
 Levels(0, mosaic_strength_2, Max(0, 255 - mosaic_strength_1), 0, 255, coring=false)
@@ -369,8 +373,8 @@ mosaic = Apply(resizer, last, yv24.width, yv24.height)
 !test ? mt_merge(yv24, mosaic, mask_yuv, y=3, u=3, v=3).unModulo(source) : \
     mt_merge(yv24r, mask_r.ConvertToYV24, mask_yuv_r, y=3, u=3, v=3)
 
-(disp_settings && safe_geo_settings) ? dispSettings(wave_reward_info_pos, wave_title_pos, wave_countdown_info_pos_x_o, \
-    wave_countdown_info_pos_y, ui_height, letter_height) : NOP
+(disp_settings && safe_geo_settings) ? dispSettings(wave_reward_info_pos, wave_countdown_info_pos_x, \
+    wave_countdown_info_pos_y, ui_height, letter_height, wave_count_down_width, wave_ui_x) : NOP
 
 test && stack_test ? StackHorizontal(mask_y, last) : NOP
 
@@ -400,7 +404,7 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
         
         wave_reward_info
         reward_displaying_now = ((wave_detection_thresh > 70 || wave_reward_display_count > 0) \
-            && (YPlaneMedian > 40 - wave_tol) && (YPlaneMedian < 40 + wave_tol) \
+            && (YPlaneMedian > 45 - wave_tol) && (YPlaneMedian < 45 + wave_tol) \
                 && (UPlaneMedian > 135 - wave_tol) && (UPlaneMedian < 135 + wave_tol) \
                     && (VPlaneMedian > 120 - wave_tol) && (VPlaneMedian < 120 + wave_tol))
         
@@ -412,10 +416,11 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
             wave_mask_full_length.Trim(0, current_frame) + wave_mask_prototype + wave_mask_full_length.Trim(current_frame + wave_mask_prototype.framecount, 0) : wave_mask_full_length
         
         countdown_info_t = wave_countdown_info.AverageLuma > 70
-        thresh_increase = (((wave_title_flash.AverageLuma > 240) ? 20 : 0) + (countdown_info_t ? 1 : 0)) * framerate_ratio
+        thresh_increase = ((wave_countdown_stop > 100 ? 4 : 0) + (countdown_info_t ? 1 : 0)) * framerate_ratio
         wave_fragment_count = (wave_suspend_count > 200) ? 0 : (thresh_increase > 0) ? wave_fragment_limit : Max(0, wave_fragment_count - framerate_ratio)
         wave_detection_thresh = (wave_fragment_count > 0) ? wave_detection_thresh + thresh_increase : 0
         wave_suspend_count = countdown_info_t ? Min(wave_suspend_limit, wave_suspend_count + framerate_ratio) : Max(0, wave_suspend_count - framerate_ratio)
+        wave_countdown_stop = (wave_countdown_time.YDifferenceFromPrevious > 15) ? 0 : wave_countdown_stop + framerate_ratio
 
         wave_mask_full_length
     """)
@@ -428,6 +433,8 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
         Subtitle( \
         " current_frame: " + String(current_frame) + \
         "\n seeked: " + String(seeked) + \
+        "\n median: " + String(wave_reward_info.YPlaneMedian) + " " + String(wave_reward_info.UPlaneMedian) + " " + String(wave_reward_info.VPlaneMedian) + \
+        "\n wave_countdown_stop: " + String(wave_countdown_stop) + \
         "\n display_count: " + String(wave_reward_display_count) + \
         "\n suspend_count: " + String(wave_suspend_count) + \
         "\n thresh: " + String(wave_detection_thresh) + \
@@ -693,11 +700,11 @@ function nameFrameMaskYV(clip "yv24", clip "y8", int "luma_threshold", int "tole
     return last
 }
 
-function letterMask(clip "yv24", int "tolerance")
+function letterMask(clip "yv24", clip "y8", int "tolerance")
 {
         yv24
         mt_logic( \
-            mt_logic(ConvertToY8.mt_binarize(Max(190, 215 - tolerance)), \
+            mt_logic(y8.mt_binarize(Max(190, 215 - tolerance)), \
             UtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and"), \
             VtoY.mt_binarize(128 - 50, mode="x 0").mt_binarize(128 + 50, mode="0 x").mt_binarize(0), mode="and")
         
@@ -705,36 +712,36 @@ function letterMask(clip "yv24", int "tolerance")
         return last
 }
 
-function dispSettings(clip "yv24", int "rp", int "tp", int "cx", int "cy", int "uh", int "lh")
+function dispSettings(clip "yv24", int "rp", int "cx", int "cy", int "uh", int "lh", int "cw", int "ux")
 {
+    blank = yv24.BlankClip(color=$FFFFFF, length=1).KillAudio
     yv24.BlankClip(color=$000000, length=1).KillAudio
-    _drawHorizontalLine(last, rp, "wave_reward_info_pos", "「ウェーブの報酬を受け取りました」 の帯の中心")
-    _drawHorizontalLine(last, uh, "ui_height", "これより下側はふきだしの検出に含めません (パレット等の誤爆防止)", upper=True)
-    _drawHorizontalLine(last, tp, "wave_title_pos", "wave 終了時に 「WAVE 1 CLEAR」 とフラッシュする文字の中心")
+    _drawHorizontalLine(last, blank, rp, "wave_reward_info_pos", "「ウェーブの報酬を受け取りました」 の帯の中心")
+    _drawHorizontalLine(last, blank, uh, "ui_height", "これより下側はふきだしの検出に含めません (パレット等の誤爆防止)", upper=True)
     
-    mt_logic(last, yv24.BlankClip(color=$FFFFFF, length=1).KillAudio.Letterbox(cy, height - cy - lh, cx, width - cx - 16 * 6 * 2, color=$000000), \
-        mode="or", y=3, u=2, v=2)
+    mt_logic(last, blank.Letterbox(cy, height - cy - lh, ux, width - ux - cw, color=$000000), mode="or", y=3, u=2, v=2)
+    mt_logic(last, blank.Letterbox(cy + lh + 2, height - (cy + lh + 2) - lh / 2, ux + 148, width - (ux + 148) - 16, color=$000000), mode="or", y=3, u=2, v=2)
     
-    Subtitle("↑ ウェーブ終了/開始まであと ↑\n" + \
+    Subtitle("↑ ウェーブ終了/開始まであと ↑\n残り時間の下一桁\n" + \
         "wave_countdown_info_pos_x: " + String(cx) + \
         "\nwave_countdown_info_pos_y: " + String(cy), \
-        y=cy + lh + 5, x=width - 10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$101010, align=9)
+        y=cy + lh * 2, x=width - 10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$101010, align=9)
         
     sub = ColorYUV(levels="TV->PC")
     m = sub.ConvertToY8.mt_binarize(0).ColorYUV(off_y=180)
     mt_merge(yv24, sub, YtoUV(m, m, m), y=3, u=3, v=3)
-    
+   
     return last
 }
 
-function _drawHorizontalLine(clip "yv24", int "y", string "name", string "desc", bool "upper")
+function _drawHorizontalLine(clip "yv24", clip "blank", int "y", string "name", string "desc", bool "upper")
 {
     yv24
     upper = Default(upper, False)
     desc = Default(desc, "")
     y2 = upper ? height - y : y
 
-    yv24.BlankClip(color=$FFFFFF, length=1).KillAudio.Letterbox(y2 - 1, height - y2 - 1, 0, 0, color=$000000)
+    blank.Letterbox(y2 - 1, height - y2 - 1, 0, 0, color=$000000)
     mt_logic(yv24, last, mode="or", y=3, u=2, v=2)
     Subtitle("↑ " + name + ": " + String(y) + " ↑\n" + desc, y=y2 + 5, x=10, lsp=20, font="メイリオ", size=20, text_color=$FFFF00, halo_color=$101010)
     
