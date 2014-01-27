@@ -299,7 +299,6 @@ wave_flush_status = """
     wave_prev_status = False
     wave_reward_display_count = 0
     wave_detection_thresh = 0
-    wave_suspend_count = 0
     wave_fragment_count = 0
     wave_countdown_stop = 0"""
     
@@ -325,8 +324,7 @@ wave_flush_status = """
     framerate_ratio = 30.0 / yv24r.framerate
     wave_tol = tolerance + 16
     wave_reward_info_height = 50
-    wave_fragment_limit = 60.0
-    wave_suspend_limit = 300.0
+    wave_fragment_limit = 30.0
     wave_current_frame_prev = 0
 
     wave_mask_prototype = BlankClip(width=yv24r.width, height=yv24r.height, length=360, color=$FFFFFF, pixel_type="Y8", fps=30) \
@@ -415,11 +413,9 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
         wave_mask_full_length = reward_display_end_now ? \
             wave_mask_full_length.Trim(0, current_frame) + wave_mask_prototype + wave_mask_full_length.Trim(current_frame + wave_mask_prototype.framecount, 0) : wave_mask_full_length
         
-        countdown_info_t = wave_countdown_info.AverageLuma > 70
-        thresh_increase = ((wave_countdown_stop > 100 ? 4 : 0) + (countdown_info_t ? 1 : 0)) * framerate_ratio
-        wave_fragment_count = (wave_suspend_count > 200) ? 0 : (thresh_increase > 0) ? wave_fragment_limit : Max(0, wave_fragment_count - framerate_ratio)
+        thresh_increase = ((wave_countdown_stop > 90 ? 4 : 0) + (wave_countdown_info.AverageLuma > 70 ? 1 : 0)) * framerate_ratio
+        wave_fragment_count = (thresh_increase > 0) ? wave_fragment_limit : Max(0, wave_fragment_count - framerate_ratio)
         wave_detection_thresh = (wave_fragment_count > 0) ? wave_detection_thresh + thresh_increase : 0
-        wave_suspend_count = countdown_info_t ? Min(wave_suspend_limit, wave_suspend_count + framerate_ratio) : Max(0, wave_suspend_count - framerate_ratio)
         wave_countdown_stop = (wave_countdown_time.YDifferenceFromPrevious > 15) ? 0 : wave_countdown_stop + framerate_ratio
 
         wave_mask_full_length
@@ -433,10 +429,8 @@ function findWaveEnd(clip "y8", clip "name_mask", int "wave_result_pos", int "wa
         Subtitle( \
         " current_frame: " + String(current_frame) + \
         "\n seeked: " + String(seeked) + \
-        "\n median: " + String(wave_reward_info.YPlaneMedian) + " " + String(wave_reward_info.UPlaneMedian) + " " + String(wave_reward_info.VPlaneMedian) + \
         "\n wave_countdown_stop: " + String(wave_countdown_stop) + \
         "\n display_count: " + String(wave_reward_display_count) + \
-        "\n suspend_count: " + String(wave_suspend_count) + \
         "\n thresh: " + String(wave_detection_thresh) + \
         "\n fragment: " + String(wave_fragment_count), lsp=20, text_color=$FFFFFF, halo_color=$808080, y=20)
         
